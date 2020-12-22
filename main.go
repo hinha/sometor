@@ -4,6 +4,7 @@ import (
 	"github.com/hinha/sometor/provider/api"
 	"github.com/hinha/sometor/provider/command"
 	"github.com/hinha/sometor/provider/infrastructure"
+	"github.com/hinha/sometor/provider/socket"
 	"os"
 	"time"
 )
@@ -31,6 +32,10 @@ func main() {
 	// API
 	apiEngine := api.Fabricate(9000)
 	apiEngine.FabricateCommand(cmd)
+
+	// Socket
+	socketEngine := socket.Fabricate(7000)
+	socketEngine.FabricateCommand(cmd)
 
 	if err := cmd.Execute(); err != nil {
 		panic(err)
