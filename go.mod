@@ -3,6 +3,7 @@ module github.com/hinha/sometor
 go 1.13
 
 require (
+	github.com/aws/aws-sdk-go v1.36.13
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 v4.1.17

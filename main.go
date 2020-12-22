@@ -5,6 +5,7 @@ import (
 	"github.com/hinha/sometor/provider/command"
 	"github.com/hinha/sometor/provider/infrastructure"
 	"github.com/hinha/sometor/provider/socket"
+	"github.com/subosito/gotenv"
 	"os"
 	"time"
 )
@@ -16,6 +17,7 @@ func init() {
 }
 
 func main() {
+	_ = gotenv.Load()
 	cmd := command.Fabricate()
 
 	// Infra
