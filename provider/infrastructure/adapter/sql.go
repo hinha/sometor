@@ -3,6 +3,7 @@ package adapter
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/hinha/sometor/provider"
 )
 
@@ -87,6 +88,14 @@ func (s *SQL) QueryRowContext(ctx context.Context, queryKey, query string, args 
 	})
 
 	return AdaptSQLRow(row)
+}
+
+func (s *SQL) Ping() {
+	err := s.db.Ping()
+	if err != nil {
+		fmt.Printf("Failed pingin mysql because of: %v (%s)\n", err, err.Error())
+	}
+	fmt.Println("Successfully pinging mysql.")
 }
 
 func runWithSQLAnalyzer(ctx context.Context, executionLevel string, f func() error) error {
