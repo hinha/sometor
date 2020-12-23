@@ -8,11 +8,14 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	_ "github.com/go-sql-driver/mysql" // Import mysql driver
+	"github.com/gocelery/gocelery"
+	"github.com/gomodule/redigo/redis"
 	"github.com/hinha/sometor/provider"
 	"github.com/hinha/sometor/provider/infrastructure/adapter"
 	"github.com/hinha/sometor/provider/infrastructure/command"
 	"os"
 	"sync"
+	"time"
 )
 
 type Infrastructure struct {
@@ -25,6 +28,13 @@ type Infrastructure struct {
 		port     string
 		dbname   string
 	}
+	celeryClient struct {
+		redis *redis.Pool
+	}
+	redisConfig struct {
+		host string
+	}
+
 	awsS3Config struct {
 		accessKeyId     string
 		accessKeySecret string
@@ -43,6 +53,8 @@ func Fabricate() (*Infrastructure, error) {
 	i.mysqlConfig.password = os.Getenv("MYSQL_PASSWORD")
 	i.mysqlConfig.dbname = os.Getenv("MYSQL_DATABASE")
 	i.mysqlConfig.port = os.Getenv("MYSQL_PORT")
+
+	i.redisConfig.host = os.Getenv("URI_REDIS_HOST")
 
 	i.awsS3Config.accessKeyId = os.Getenv("AWS_ACCESS_KEY_ID")
 	i.awsS3Config.accessKeySecret = os.Getenv("AWS_SECRET_ACCESS_KEY")
@@ -71,10 +83,32 @@ func (i *Infrastructure) FabricateCommand(cmd provider.Command) error {
 	return nil
 }
 
-func (i *Infrastructure) Clone() {
-	if i.mysqlDB != nil {
-		_ = i.mysqlDB.Close()
+func (i *Infrastructure) Celery() provider.CeleryClient {
+	redisPool := &redis.Pool{
+		MaxIdle:     3,                 // maximum number of idle connections in the pool
+		MaxActive:   0,                 // maximum number of connections allocated by the pool at a given time
+		IdleTimeout: 240 * time.Second, // close connections after remaining idle for this duration
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.DialURL(i.redisConfig.host)
+			if err != nil {
+				return nil, err
+			}
+			return c, err
+		},
+		TestOnBorrow: func(c redis.Conn, t time.Time) error {
+			_, err := c.Do("PING")
+			return err
+		},
 	}
+
+	// initialize celery client
+	cli, _ := gocelery.NewCeleryClient(
+		gocelery.NewRedisBroker(redisPool),
+		&gocelery.RedisCeleryBackend{Pool: redisPool},
+		3,
+	)
+
+	return adapter.AdaptCelery(cli)
 }
 
 // MYSQL provide mysql interface

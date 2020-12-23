@@ -9,11 +9,12 @@ import (
 )
 
 type StreamKeyword struct {
-	userProvider provider.StreamSequence
+	userProvider   provider.StreamSequence
+	celeryProvider provider.CeleryClient
 }
 
-func FabricateKeyword(provider provider.StreamSequence) *StreamKeyword {
-	return &StreamKeyword{userProvider: provider}
+func FabricateKeyword(provider provider.StreamSequence, celery provider.CeleryClient) *StreamKeyword {
+	return &StreamKeyword{userProvider: provider, celeryProvider: celery}
 }
 
 func (s *StreamKeyword) FabricateSchedule(engine provider.ScheduleEngine) {
@@ -22,5 +23,5 @@ func (s *StreamKeyword) FabricateSchedule(engine provider.ScheduleEngine) {
 
 func (s *StreamKeyword) CollectAccount(ctx context.Context) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
 	find := usecase.FindCollectionAccount{}
-	return find.PerformCollection(ctx, s.userProvider)
+	return find.PerformCollection(ctx, s.userProvider, s.celeryProvider)
 }

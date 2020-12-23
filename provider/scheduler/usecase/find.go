@@ -2,14 +2,19 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
+	"log"
+	"math/rand"
+	"net/http"
+	"reflect"
 )
 
 type FindCollectionAccount struct{}
 
-func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvider provider.StreamSequence) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
+func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvider provider.StreamSequence, celeryProvider provider.CeleryClient) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
 	// perbanyak
 	// 1. collect data from db
 	// 2. call rpc twitter or instagram
@@ -36,6 +41,19 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 			}
 		}
 	}
+
+	// prepare arguments
+	argA := rand.Intn(10)
+	argB := rand.Intn(10)
+
+	result, errCelery := celeryProvider.GetTaskResult("example.add", 1, argA, argB)
+	if errCelery != nil {
+		return nil, &entity.ApplicationError{
+			Err:        []error{errors.New("task error")},
+			HTTPStatus: http.StatusNotFound,
+		}
+	}
+	log.Printf("result: %+v of type %+v", result, reflect.TypeOf(result))
 
 	return userProvider.FindAllUser(ctx)
 }

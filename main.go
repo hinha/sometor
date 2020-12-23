@@ -35,6 +35,8 @@ func main() {
 		panic(err)
 	}
 
+	celery := infra.Celery()
+
 	s3Management, err := infra.S3()
 	if err != nil {
 		panic(err)
@@ -60,7 +62,7 @@ func main() {
 	cronJob := scheduler.Fabricate("test")
 	cronJob.FabricateCommand(cmd)
 
-	keywordJob := scheduler.FabricateKeyword(userFabricate)
+	keywordJob := scheduler.FabricateKeyword(userFabricate, celery)
 	keywordJob.FabricateSchedule(cronJob)
 
 	if err := cmd.Execute(); err != nil {
