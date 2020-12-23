@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/hinha/sometor/provider/api"
 	"github.com/hinha/sometor/provider/command"
 	"github.com/hinha/sometor/provider/infrastructure"
@@ -26,6 +27,18 @@ func main() {
 		panic(err)
 	}
 	defer infra.Close()
+
+	db, err := infra.DB()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(db)
+
+	s3Management, err := infra.S3()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("s3: ", s3Management)
 
 	if err := infra.FabricateCommand(cmd); err != nil {
 		panic(err)
