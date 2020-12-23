@@ -128,11 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-.idea
-.env
-.env.production
-# Dependency directories (remove the comment below to include it)
-# vendor/
-temp/
-server/orakarik
-config/
+orakarik/

@@ -1,0 +1,65 @@
+syntax = "proto3";
+package instagram;
+
+import "validator.proto";
+
+message Item {
+  string id = 1;
+  string permalink = 2;
+  int64 timestamp = 3;
+  string created_at = 4;
+  string created_at_time = 5;
+  string text_clean = 6;
+  string text = 7;
+  string text_sentiment = 8;
+  string user_id = 9;
+  string user_name = 10;
+  string name = 11;
+  string user_description = 12;
+  bool user_verified = 13;
+  int64 user_followers_count = 14;
+  int64 user_following_count = 15;
+  int32 user_timeline_count = 16;
+  int32 user_highlight_count = 17;
+  bool is_private = 18;
+  string user_link_url = 19;
+  string user_profile_image_url = 20;
+  int64 like_count = 21;
+  int64 comment_count = 22;
+  int64 video_view_count = 23;
+  repeated Mention mentions = 24;
+  repeated Hashtag hashtags = 25;
+  int64 engagement = 26;
+  int64 potential_reach = 27;
+  float engagement_rate = 28;
+  bool comment_disable = 29;
+  bool is_video = 30;
+  string video_url = 31;
+  string display_url = 32;
+}
+
+message Mention {
+  string text = 2;
+}
+
+message Hashtag {
+  string text = 1;
+}
+
+service instagram {
+  rpc StreamRequest (instagramRequest) returns (instagramResponse) {};
+}
+
+message instagramRequest {
+  string keyword = 1 [(validator.field) = {string_not_empty: True}];
+  string search_type = 2 [(validator.field) = {string_not_empty: True}];
+  string since = 3 [(validator.field) = {string_not_empty: True}];
+  string until = 4 [(validator.field) = {string_not_empty: True}];
+  string proxy = 5;
+}
+
+message instagramResponse {
+  string message = 1;
+  string updateAt = 2;
+  repeated Item items = 3;
+}
