@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"github.com/gocelery/gocelery"
 )
 
 // ErrCacheMiss returned when value from cache is not found
@@ -11,6 +12,12 @@ import (
 
 // ErrDBNotFound returned when there is no data found in the database
 var ErrDBNotFound = errors.New("data not found")
+
+type CeleryClient interface {
+	Task(taskName string, args interface{}) (*gocelery.AsyncResult, error)
+	Result(result *gocelery.AsyncResult) (interface{}, error)
+	GetTaskResult(taskName string, timeout int, args ...interface{}) (interface{}, error)
+}
 
 // S3Management is bucket management transaction
 type S3Management interface {
