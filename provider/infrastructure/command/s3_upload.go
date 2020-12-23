@@ -43,7 +43,7 @@ func (b *BucketS3UploadObject) Run(args []string) {
 	input := &s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		ACL:    aws.String("private"),
-		Key:    aws.String(fmt.Sprintf("temp/test.go")),
+		Key:    aws.String(fmt.Sprintf("temp/%s", args[0])),
 		Body:   file,
 		//ContentType:        aws.String(http.DetectContentType(message)),
 		ContentDisposition: aws.String("attachment"),
