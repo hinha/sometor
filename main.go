@@ -5,7 +5,9 @@ import (
 	"github.com/hinha/sometor/provider/api"
 	"github.com/hinha/sometor/provider/command"
 	"github.com/hinha/sometor/provider/infrastructure"
+	"github.com/hinha/sometor/provider/scheduler"
 	"github.com/hinha/sometor/provider/socket"
+	"github.com/hinha/sometor/provider/user"
 	"github.com/subosito/gotenv"
 	"os"
 	"time"
@@ -32,7 +34,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(db)
 
 	s3Management, err := infra.S3()
 	if err != nil {
@@ -44,6 +45,9 @@ func main() {
 		panic(err)
 	}
 
+	// User
+	userFabricate := user.FabricateStream(db)
+
 	// API
 	apiEngine := api.Fabricate(9000)
 	apiEngine.FabricateCommand(cmd)
@@ -51,6 +55,13 @@ func main() {
 	// Socket
 	socketEngine := socket.Fabricate(7000)
 	socketEngine.FabricateCommand(cmd)
+
+	// Scheduler Cron
+	cronJob := scheduler.Fabricate("test")
+	cronJob.FabricateCommand(cmd)
+
+	keywordJob := scheduler.FabricateKeyword(userFabricate)
+	keywordJob.FabricateSchedule(cronJob)
 
 	if err := cmd.Execute(); err != nil {
 		panic(err)

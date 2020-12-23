@@ -24,6 +24,7 @@ type DB interface {
 	ExecContext(ctx context.Context, queryKey, query string, args ...interface{}) (Result, error)
 	QueryContext(ctx context.Context, queryKey, query string, args ...interface{}) (Rows, error)
 	QueryRowContext(ctx context.Context, queryKey, query string, args ...interface{}) Row
+	Ping()
 }
 
 // TX is database transaction
