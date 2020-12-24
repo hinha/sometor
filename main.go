@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/hinha/sometor/provider/api"
 	"github.com/hinha/sometor/provider/command"
 	"github.com/hinha/sometor/provider/infrastructure"
@@ -41,7 +40,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("s3: ", s3Management)
 
 	if err := infra.FabricateCommand(cmd); err != nil {
 		panic(err)
@@ -62,7 +60,7 @@ func main() {
 	cronJob := scheduler.Fabricate("test")
 	cronJob.FabricateCommand(cmd)
 
-	keywordJob := scheduler.FabricateKeyword(userFabricate, celery)
+	keywordJob := scheduler.FabricateKeyword(userFabricate, celery, s3Management)
 	keywordJob.FabricateSchedule(cronJob)
 
 	if err := cmd.Execute(); err != nil {

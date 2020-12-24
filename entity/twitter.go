@@ -1,5 +1,10 @@
 package entity
 
+type TwitterResult struct {
+	Results    []TwitterItem `json:"results"`
+	LastUpdate string        `json:"last_update"`
+}
+
 type TwitterItem struct {
 	Id                  int64   `json:"id"`
 	Permalink           string  `json:"permalink"`

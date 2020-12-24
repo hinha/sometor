@@ -1,10 +1,10 @@
 package provider
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"github.com/gocelery/gocelery"
+	"os"
 )
 
 // ErrCacheMiss returned when value from cache is not found
@@ -21,7 +21,7 @@ type CeleryClient interface {
 
 // S3Management is bucket management transaction
 type S3Management interface {
-	PutObject(pathString string, fileReader *bytes.Reader) error
+	PutObject(pathString string, file *os.File) error
 	DownloadObject(pathObject string) (string, error)
 }
 
