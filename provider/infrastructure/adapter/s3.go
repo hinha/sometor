@@ -1,7 +1,6 @@
 package adapter
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,18 +21,20 @@ func AdaptS3(object *s3.S3, awSession *session.Session) *S3 {
 	return &S3{object: object, session: awSession, bucketName: bucket}
 }
 
-func (s *S3) PutObject(pathObject string, fileReader *bytes.Reader) error {
+func (s *S3) PutObject(pathObject string, file *os.File) error {
+	defer file.Close()
+
 	input := &s3.PutObjectInput{
 		Bucket:             aws.String(s.bucketName),
 		ACL:                aws.String("private"),
 		Key:                aws.String(pathObject),
-		Body:               fileReader,
+		Body:               file,
 		ContentDisposition: aws.String("attachment"),
 	}
 
 	aa, err := s.object.PutObject(input)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	fmt.Println(aa.GoString())
