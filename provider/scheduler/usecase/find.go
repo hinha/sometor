@@ -14,11 +14,9 @@ import (
 	"strings"
 )
 
-type Claims map[string]interface{}
 type FindCollectionAccount struct{}
 
 func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvider provider.StreamSequence, celeryProvider provider.CeleryClient, s3Provider provider.S3Management) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
-	//var arrData []map[string]interface{}
 	// perbanyak
 	// 1. collect data from db
 	// 2. call rpc twitter or instagram
@@ -32,19 +30,13 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 		return account, err
 	}
 
-	//ID            int       `json:"id"`
-	//	Keyword       string    `json:"keyword"`
-	//	Media         string    `json:"media"`
-	//	Type          string    `json:"type"`
-	//	CreatedAt     time.Time `json:"created_at"`
-	//	UserAccountID string    `json:"user_account_id"`
 	var keyword string
 	if collections, err := userProvider.FindAllUser(ctx); err != nil {
 		return collections, err
 	} else {
 		for _, data := range collections {
 			if data.Media == "twitter" {
-				result, errCelery := celeryProvider.GetTaskResult("example.twitter_scrape_v1", 1, data)
+				result, errCelery := celeryProvider.GetTaskResult("task.twitter_scrape_v1", 1, data)
 				if errCelery != nil {
 					return nil, &entity.ApplicationError{
 						Err:        []error{errors.New("task error")},
@@ -52,15 +44,21 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 					}
 				}
 				if result != nil {
-					keyword = strings.ReplaceAll(data.Keyword, "@", "")
-					osFile, pathString, err := f.CreateFileFromMap(keyword, data.Media, result)
+					switch data.Type {
+					case "account":
+						keyword = strings.ReplaceAll(data.Keyword, "@", "")
+					case "hashtag":
+						keyword = strings.ReplaceAll(data.Keyword, "#", "")
+					}
+
+					formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
+					osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
 					if err != nil {
 						fmt.Println(err)
 					}
 
 					err = s3Provider.PutObject(pathString, osFile)
 					if err != nil {
-						fmt.Println(err)
 						return nil, &entity.ApplicationError{
 							Err:        []error{errors.New("cannot put object s3")},
 							HTTPStatus: http.StatusNotFound,

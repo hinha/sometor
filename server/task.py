@@ -1,5 +1,7 @@
 import logging
 import time
+import pandas as pd
+from datetime import datetime, timedelta
 from celery import Celery
 from pony.orm import Database
 from decouple import config
@@ -7,6 +9,8 @@ from celery.signals import after_setup_task_logger
 from celery.app.log import TaskFormatter
 
 from orakarik.scrape.tweet_scrape import SnTweetScrape
+# from . import summary
+from summary import Summary
 
 app = Celery(
     'tasks',
@@ -43,7 +47,14 @@ app.conf.update(
 )
 
 logger = logging.getLogger(__name__)
-from datetime import datetime, timedelta
+
+# from pony.orm import db_session
+#
+# with db_session:
+#     sql = f"select * from most_engaged_user where user_name = '' and media = '' and stream_sequence_account_id = ''"
+#     result = db.execute(sql)
+#     print(result.fetchone())
+
 
 
 @app.task
@@ -63,15 +74,30 @@ def twitter_scrape_v1(dataSequence):
     else:
         raise Exception("length of dataSequence")
 
-    since = datetime.now() - timedelta(2)
-    until = datetime.now()
-
+    if task_request["type"] == "account":
+        since = datetime.now() - timedelta(days=2)
+        until = datetime.now()
+    elif task_request["type"] == "hashtag":
+        since = datetime.now() - timedelta(days=30)
+        until = datetime.now()
+    print(since, until)
     scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 100, proxy=False, proxy_dict={})
     twitter_data = []
     if task_request["type"] == "account":
         twitter_data = scrape.tweetAccount(task_request["keyword"].replace("@", ""), lang="id")
     elif task_request["type"] == "hashtag":
-        twitter_data = scrape.tweetHashtag(task_request, lang="id")
+        twitter_data = scrape.tweetHashtag(task_request["keyword"], lang="id")
+
+        df = pd.DataFrame(twitter_data)
+
+        oDB = app.conf.get("MYSQL_DATABASE")
+        scumm = Summary(oDB)
+        most_egg = scumm.most_engg_user(df)
+        if most_egg:
+            for x in most_egg:
+                result = scumm.find_user_most_engaged(x, task_request["media"], task_request["id"])
+                if not result:
+                    scumm.insert_most_engaged(x, task_request["media"], task_request["id"])
     else:
         twitter_data = scrape.tweetSearch(task_request, lang="id")
 
