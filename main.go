@@ -56,12 +56,17 @@ func main() {
 	socketEngine := socket.Fabricate(7000)
 	socketEngine.FabricateCommand(cmd)
 
-	// Scheduler Cron
-	cronJob := scheduler.Fabricate("test")
-	cronJob.FabricateCommand(cmd)
+	// Scheduler Cron Local
+	cronJobLocal := scheduler.FabricateLocal("cron_local")
+	cronJobLocal.FabricateCommand(cmd)
+	cronJobServer := scheduler.FabricateServer("cron_server")
+	cronJobServer.FabricateCommand(cmd)
 
-	keywordJob := scheduler.FabricateKeyword(userFabricate, celery, s3Management)
-	keywordJob.FabricateSchedule(cronJob)
+	keywordJobLocal := scheduler.FabricateKeyword(userFabricate, celery, s3Management)
+	keywordJobLocal.FabricateSchedule(cronJobLocal)
+
+	keywordJobServer := scheduler.FabricateKeywordServer(userFabricate, celery, s3Management)
+	keywordJobServer.FabricateSchedule(cronJobServer)
 
 	if err := cmd.Execute(); err != nil {
 		panic(err)

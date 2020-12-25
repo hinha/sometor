@@ -21,5 +21,6 @@ type ScheduleEngine interface {
 }
 
 type TwitterStreaming interface {
-	CollectAccount(ctx context.Context) ([]entity.StreamSequenceInitTable, *entity.ApplicationError)
+	CollectAccount(ctx context.Context) *entity.ApplicationError
+	DownloadStream(ctx context.Context) *entity.ApplicationError
 }

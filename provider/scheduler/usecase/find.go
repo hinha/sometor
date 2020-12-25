@@ -8,7 +8,6 @@ import (
 	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
 	"io/ioutil"
-	"net/http"
 	"os"
 	"reflect"
 	"strings"
@@ -16,7 +15,7 @@ import (
 
 type FindCollectionAccount struct{}
 
-func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvider provider.StreamSequence, celeryProvider provider.CeleryClient, s3Provider provider.S3Management) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
+func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvider provider.StreamSequence, celeryProvider provider.CeleryClient, s3Provider provider.S3Management) *entity.ApplicationError {
 	// perbanyak
 	// 1. collect data from db
 	// 2. call rpc twitter or instagram
@@ -25,22 +24,16 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 
 	// flow
 	//  cron <- db -> infra task -> s3
-	account, err := userProvider.FindAllUser(ctx)
-	if err != nil {
-		return account, err
-	}
-
 	var keyword string
 	if collections, err := userProvider.FindAllUser(ctx); err != nil {
-		return collections, err
+		return err
 	} else {
 		for _, data := range collections {
 			if data.Media == "twitter" {
 				result, errCelery := celeryProvider.GetTaskResult("task.twitter_scrape_v1", 1, data)
 				if errCelery != nil {
-					return nil, &entity.ApplicationError{
-						Err:        []error{errors.New("task error")},
-						HTTPStatus: http.StatusNotFound,
+					return &entity.ApplicationError{
+						Err: []error{errors.New("task error")},
 					}
 				}
 				if result != nil {
@@ -59,9 +52,8 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 
 					err = s3Provider.PutObject(pathString, osFile)
 					if err != nil {
-						return nil, &entity.ApplicationError{
-							Err:        []error{errors.New("cannot put object s3")},
-							HTTPStatus: http.StatusNotFound,
+						return &entity.ApplicationError{
+							Err: []error{errors.New("cannot put object s3")},
 						}
 					}
 				}
@@ -74,7 +66,7 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 		}
 	}
 
-	return userProvider.FindAllUser(ctx)
+	return nil
 }
 
 func (f *FindCollectionAccount) FillStruct(m map[string]interface{}, s interface{}) error {

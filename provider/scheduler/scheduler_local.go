@@ -7,17 +7,16 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/hinha/sometor/provider"
 	"github.com/hinha/sometor/provider/scheduler/command"
-	"github.com/hinha/sometor/provider/scheduler/job"
 	"os"
 	"os/signal"
 )
 
-type Scheduler struct {
+type Local struct {
 	namespace string
 	work      *work.WorkerPool
 }
 
-func Fabricate(namespace string) *Scheduler {
+func FabricateLocal(namespace string) *Local {
 	redisPool := &redis.Pool{
 		MaxActive: 5,
 		MaxIdle:   5,
@@ -25,20 +24,17 @@ func Fabricate(namespace string) *Scheduler {
 		Dial:      func() (redis.Conn, error) { return redis.Dial("tcp", fmt.Sprintf("%s:6379", os.Getenv("REDIS_HOST"))) },
 	}
 
-	return &Scheduler{namespace: namespace, work: work.NewWorkerPool(struct{}{}, 10, namespace, redisPool)}
+	return &Local{namespace: namespace, work: work.NewWorkerPool(struct{}{}, 10, namespace, redisPool)}
 }
 
 // FabricateCommand insert schedule related command
-func (s *Scheduler) FabricateCommand(cmd provider.Command) {
+func (s *Local) FabricateCommand(cmd provider.Command) {
 	cmd.InjectCommand(
 		command.NewRunScheduler(s),
 	)
 }
 
-func (s *Scheduler) Run() {
-
-	s.Inject(job.NewPingDB())
-
+func (s *Local) Run() {
 	// Start processing jobs
 	s.work.Start()
 	signalChan := make(chan os.Signal, 1)
@@ -46,12 +42,12 @@ func (s *Scheduler) Run() {
 	<-signalChan
 }
 
-func (s *Scheduler) Inject(handler provider.ScheduleHandler) {
+func (s *Local) Inject(handler provider.ScheduleHandler) {
 	s.work.PeriodicallyEnqueue(handler.JobTime(), handler.JobName())
 	s.work.Middleware(handler.JobMiddleware)
 	s.work.JobWithOptions(handler.JobName(), work.JobOptions{Priority: 10, MaxFails: handler.Retry()}, handler.JobFunc)
 }
 
-func (s *Scheduler) Shutdown(ctx context.Context) {
+func (s *Local) Shutdown(ctx context.Context) {
 	s.work.Stop()
 }

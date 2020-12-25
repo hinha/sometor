@@ -8,31 +8,31 @@ import (
 )
 
 // Run is a command to run api engine
-type Run struct {
+type RunSchedulerServer struct {
 	engine provider.ScheduleEngine
 }
 
-// NewRunScheduler return CLI to run scheduler
-func NewRunScheduler(engine provider.ScheduleEngine) *Run {
-	return &Run{engine: engine}
+// NewRunSchedulerServer return CLI to run scheduler
+func NewRunSchedulerServer(engine provider.ScheduleEngine) *RunSchedulerServer {
+	return &RunSchedulerServer{engine: engine}
 }
 
 // Use return how the command used
-func (r *Run) Use() string {
-	return "run:cron:local"
+func (r *RunSchedulerServer) Use() string {
+	return "run:cron:server"
 }
 
 // Example of the command
-func (r *Run) Example() string {
-	return "run:cron:local"
+func (r *RunSchedulerServer) Example() string {
+	return "run:cron:server"
 }
 
 // Short description about the command
-func (r *Run) Short() string {
+func (r *RunSchedulerServer) Short() string {
 	return "Run Scheduler cron engine"
 }
 
-func (r *Run) Run(args []string) {
+func (r *RunSchedulerServer) Run(args []string) {
 	r.engine.Run()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
