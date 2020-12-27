@@ -14,7 +14,7 @@ func NewPingWeb() *PingWeb {
 
 // Path return api path
 func (h *PingWeb) Path() string {
-	return "/test"
+	return "/demo"
 }
 
 // Method return api method
@@ -25,6 +25,6 @@ func (h *PingWeb) Method() string {
 // Handle health which always return 200
 func (h *PingWeb) Handle(context provider.SocketContext) {
 	_ = context.Render(http.StatusOK, "index.html", map[string]interface{}{
-		"name": "Dolly!",
+		"title": "Test Twitter",
 	})
 }

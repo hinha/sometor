@@ -31,17 +31,18 @@ func (a *Socket) FabricateCommand(cmd provider.Command) {
 func (a *Socket) Run() error {
 	a.engine.Use(middleware.Logger())
 	//a.engine.Static("/", "assets")
+	a.engine.Static("/", "assets")
 	renderer := &TemplateRenderer{
 		templates: template.Must(template.ParseGlob("assets/*.html")),
 	}
 	a.engine.Renderer = renderer
 
-	a.InjectAPI(handler.NewPing())
-	a.InjectAPI(handler.NewPingWeb())
+	a.InjectSocket(handler.NewPing())
+	a.InjectSocket(handler.NewPingWeb())
 	return a.engine.Start(fmt.Sprintf(":%d", a.port))
 }
 
-func (a *Socket) InjectAPI(handler provider.SocketHandler) {
+func (a *Socket) InjectSocket(handler provider.SocketHandler) {
 	a.engine.Add(handler.Method(), handler.Path(), func(context echo.Context) error {
 		handler.Handle(context)
 		return nil

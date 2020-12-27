@@ -57,6 +57,16 @@ func (a *API) InjectAPI(handler provider.APIHandler) {
 
 func (a *API) Run() error {
 	a.engine.Use(middleware.Logger())
+	a.engine.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowHeaders: []string{
+			echo.HeaderOrigin,
+			echo.HeaderContentType,
+			echo.HeaderAccept,
+			echo.HeaderAccessControlAllowHeaders,
+			echo.HeaderAccessControlAllowOrigin,
+		},
+	}))
 	a.InjectAPI(handler.NewHealth())
 	return a.engine.Start(fmt.Sprintf(":%d", a.port))
 }
