@@ -1,6 +1,11 @@
 version: '3'
 
 services:
+  stream-sometor-sheduler:
+    tty: true
+    restart: unless-stopped
+    image: sometor:1.0
+    command: [ "./main", "run:cron:server" ]
   stream-sometor-api:
     tty: true
     restart: unless-stopped
@@ -15,8 +20,3 @@ services:
     ports:
       - "9080:9080"
     command: [ "./main", "run:socket" ]
-  stream-sometor-sheduler:
-    tty: true
-    restart: unless-stopped
-    image: sometor:1.0
-    command: [ "./main", "run:cron:server" ]
