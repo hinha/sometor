@@ -74,6 +74,7 @@ func (i *Infrastructure) FabricateCommand(cmd provider.Command) error {
 	}
 
 	cmd.InjectCommand(
+		command.NewPingMYSQL(i.mysqlDB),
 		command.NewBucketS3List(s3Object),
 		command.NewBucketS3ListObject(s3Object),
 		command.NewBucketS3UploadObject(s3Object),
