@@ -8,6 +8,7 @@ type TwitterResult struct {
 type TwitterItem struct {
 	Id                  int64   `json:"id"`
 	Permalink           string  `json:"permalink"`
+	StrUpdatedDate      string  `json:"str_updated_date"`
 	Timestamp           int64   `json:"timestamp"`
 	CreatedAt           string  `json:"created_at"`
 	CreatedAtTime       string  `json:"created_at_time"`

@@ -1,0 +1,1 @@
+DROP TABLE `most_engaged_user`;
