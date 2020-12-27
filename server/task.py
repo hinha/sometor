@@ -1,5 +1,7 @@
 import logging
 import time
+import timeago
+
 import pandas as pd
 from datetime import datetime, timedelta
 from celery import Celery
@@ -48,22 +50,9 @@ app.conf.update(
 
 logger = logging.getLogger(__name__)
 
-# from pony.orm import db_session
-#
-# with db_session:
-#     sql = f"select * from most_engaged_user where user_name = '' and media = '' and stream_sequence_account_id = ''"
-#     result = db.execute(sql)
-#     print(result.fetchone())
-
-
 
 @app.task
 def twitter_scrape_v1(dataSequence):
-    # oDB = app.conf.get("MYSQL_DATABASE")
-    # keyword = []
-    # with db_session:
-    #     for data in oDB.execute("select * from stream_sequence_account"):
-    #         keyword.append(data[1])
 
     task_request = {}
     if isinstance(dataSequence, list):
@@ -75,13 +64,13 @@ def twitter_scrape_v1(dataSequence):
         raise Exception("length of dataSequence")
 
     if task_request["type"] == "account":
-        since = datetime.now() - timedelta(days=2)
+        since = datetime.now() - timedelta(days=7)
         until = datetime.now()
     elif task_request["type"] == "hashtag":
         since = datetime.now() - timedelta(days=30)
         until = datetime.now()
-    print(since, until)
-    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 100, proxy=False, proxy_dict={})
+
+    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 130, proxy=False, proxy_dict={})
     twitter_data = []
     if task_request["type"] == "account":
         twitter_data = scrape.tweetAccount(task_request["keyword"].replace("@", ""), lang="id")
@@ -101,8 +90,14 @@ def twitter_scrape_v1(dataSequence):
     else:
         twitter_data = scrape.tweetSearch(task_request, lang="id")
 
-    twitter_data = sorted(twitter_data, key=lambda k: k['timestamp'])
-    return {"results": twitter_data, "last_update": twitter_data[0]["created_at"]}
+    dataTList = []
+    for tw in twitter_data:
+        nextTime = datetime.now() - datetime.fromtimestamp(tw['timestamp'])
+        tw["str_updated_date"] = timeago.format(nextTime, datetime.now())
+        dataTList.append(tw)
+
+    dataTList.sort(key=lambda k: k['timestamp'], reverse=True)
+    return {"results": twitter_data, "last_update": dataTList[0]["created_at"]}
 
 
 @app.task
