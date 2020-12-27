@@ -10,3 +10,10 @@ type StreamSequenceInitTable struct {
 	CreatedAt     time.Time `json:"created_at"`
 	UserAccountID string    `json:"user_account_id"`
 }
+
+type StreamSequenceInsertable struct {
+	Keyword       string `json:"keyword"`
+	Media         string `json:"media"`
+	Type          string `json:"type"`
+	UserAccountID string `json:"user_account_id"`
+}

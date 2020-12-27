@@ -53,3 +53,27 @@ func (u *UserAccountID) PerformInfo(ctx context.Context, ID string, db provider.
 
 	return data, nil
 }
+
+type FindStreamKeywordID struct{}
+
+func (f *FindStreamKeywordID) Perform(ctx context.Context, ID int, db provider.DB) (entity.StreamSequenceInsertable, *entity.ApplicationError) {
+	var data entity.StreamSequenceInsertable
+	row := db.QueryRowContext(ctx, "find-stream-user", "select keyword,media,type,user_account_id from stream_sequence_account where id = ?", ID)
+	if err := row.Scan(
+		&data.Keyword,
+		&data.Media,
+		&data.Type,
+		&data.UserAccountID); err == provider.ErrDBNotFound {
+		return data, &entity.ApplicationError{
+			Err:        []error{errors.New("keyword not found")},
+			HTTPStatus: http.StatusNotFound,
+		}
+	} else if err != nil {
+		return data, &entity.ApplicationError{
+			Err:        []error{errors.New("service unavailable")},
+			HTTPStatus: http.StatusServiceUnavailable,
+		}
+	}
+
+	return data, nil
+}
