@@ -2,11 +2,13 @@ package provider
 
 import (
 	"context"
+	"github.com/hinha/sometor/entity"
 	"github.com/labstack/echo/v4"
 	"io"
 	"mime/multipart"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 type SocketContext interface {
@@ -122,6 +124,12 @@ type SocketHandler interface {
 
 type SocketEngine interface {
 	Run() error
-	InjectAPI(handler SocketHandler)
+	InjectSocket(handler SocketHandler)
 	Shutdown(ctx context.Context) error
+}
+
+type SocketTwitter interface {
+	FileReader(ctx context.Context, lastMod time.Time, media string, FileUser string) ([]byte, time.Time, error)
+	Writer(ctx context.Context, ID string, FileUser string) // deprecate
+	UserValid(ctx context.Context, ID, keyword, media string) (entity.UserAccountSelectable, *entity.ApplicationError)
 }

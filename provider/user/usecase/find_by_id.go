@@ -21,7 +21,27 @@ func (s *StreamRequestByID) Perform(ctx context.Context, ID string, db provider.
 		&data.CreatedAt,
 		&data.UserAccountID); err == provider.ErrDBNotFound {
 		return data, &entity.ApplicationError{
-			Err:        []error{errors.New("arn not found")},
+			Err:        []error{errors.New("user not found")},
+			HTTPStatus: http.StatusNotFound,
+		}
+	} else if err != nil {
+		return data, &entity.ApplicationError{
+			Err:        []error{errors.New("service unavailable")},
+			HTTPStatus: http.StatusServiceUnavailable,
+		}
+	}
+
+	return data, nil
+}
+
+type UserAccountID struct{}
+
+func (u *UserAccountID) PerformInfo(ctx context.Context, ID string, db provider.DB) (entity.UserAccountSelectable, *entity.ApplicationError) {
+	var data entity.UserAccountSelectable
+	row := db.QueryRowContext(ctx, "find-stream-user_account", "select unique_account,email,unique_user from user_account where unique_account = ?", ID)
+	if err := row.Scan(&data.UniqueAccount, &data.Email, &data.UniqueUser); err == provider.ErrDBNotFound {
+		return data, &entity.ApplicationError{
+			Err:        []error{errors.New("user not found")},
 			HTTPStatus: http.StatusNotFound,
 		}
 	} else if err != nil {

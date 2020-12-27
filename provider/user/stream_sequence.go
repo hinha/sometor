@@ -24,3 +24,13 @@ func (s *StreamSequence) FindAllUser(ctx context.Context) ([]entity.StreamSequen
 	findAll := usecase.StreamRequestAll{}
 	return findAll.Perform(ctx, s.db)
 }
+
+func (s *StreamSequence) FindByUserAccountIDInfo(ctx context.Context, ID string) (entity.UserAccountSelectable, *entity.ApplicationError) {
+	findUser := usecase.UserAccountID{}
+	return findUser.PerformInfo(ctx, ID, s.db)
+}
+
+func (s *StreamSequence) FindByKeywordStreamInfo(ctx context.Context, keyword, media string) (entity.StreamSequenceInitTable, *entity.ApplicationError) {
+	findKeyword := usecase.FindByKeywordStream{}
+	return findKeyword.Perform(ctx, keyword, media, s.db)
+}

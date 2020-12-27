@@ -6,6 +6,8 @@ import (
 	"github.com/hinha/sometor/provider/infrastructure"
 	"github.com/hinha/sometor/provider/scheduler"
 	"github.com/hinha/sometor/provider/socket"
+	"github.com/hinha/sometor/provider/socket_stream"
+	"github.com/hinha/sometor/provider/socmed"
 	"github.com/hinha/sometor/provider/user"
 	"github.com/subosito/gotenv"
 	"os"
@@ -47,14 +49,22 @@ func main() {
 
 	// User
 	userFabricate := user.FabricateStream(db)
+	keywordStream := user.FabricateStreamKeyword(db)
 
 	// API
 	apiEngine := api.Fabricate(9000)
 	apiEngine.FabricateCommand(cmd)
 
+	keywordStreamAPI := socmed.FabricateKeyword(keywordStream)
+	keywordStreamAPI.FabricateAPI(apiEngine)
+
 	// Socket
 	socketEngine := socket.Fabricate(7000)
 	socketEngine.FabricateCommand(cmd)
+
+	// Socket Stream Twitter, Instagram and facebook
+	twitterSocket := socket_stream.Fabricate(userFabricate)
+	twitterSocket.FabricateSocket(socketEngine)
 
 	// Scheduler Cron Local
 	cronJobLocal := scheduler.FabricateLocal("cron_local")
