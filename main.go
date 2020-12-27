@@ -11,6 +11,7 @@ import (
 	"github.com/hinha/sometor/provider/user"
 	"github.com/subosito/gotenv"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -52,14 +53,16 @@ func main() {
 	keywordStream := user.FabricateStreamKeyword(db)
 
 	// API
-	apiEngine := api.Fabricate(9000)
+	portAPI, _ := strconv.Atoi(os.Getenv("PORT_API"))
+	apiEngine := api.Fabricate(portAPI)
 	apiEngine.FabricateCommand(cmd)
 
 	keywordStreamAPI := socmed.FabricateKeyword(keywordStream)
 	keywordStreamAPI.FabricateAPI(apiEngine)
 
 	// Socket
-	socketEngine := socket.Fabricate(7000)
+	portSocket, _ := strconv.Atoi(os.Getenv("PORT_SOCKET"))
+	socketEngine := socket.Fabricate(portSocket)
 	socketEngine.FabricateCommand(cmd)
 
 	// Socket Stream Twitter, Instagram and facebook
