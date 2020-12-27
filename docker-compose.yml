@@ -11,12 +11,12 @@ services:
     restart: unless-stopped
     image: sometor:1.0
     ports:
-      - "9090:9090"
+      - "9091:9091"
     command: [ "./main", "run:api" ]
   stream-sometor-socket:
     tty: true
     restart: unless-stopped
     image: sometor:1.0
     ports:
-      - "9080:9080"
+      - "9081:9081"
     command: [ "./main", "run:socket" ]
