@@ -29,11 +29,17 @@ func (f *FindObjectS3Job) PerformCollection(ctx context.Context, userProvider pr
 				_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
 				if err != nil {
 					return &entity.ApplicationError{
-						Err: []error{errors.New("cannot download object s3")},
+						Err: []error{errors.New("cannot download twitter object s3")},
 					}
 				}
 			} else if data.Media == "instagram" {
-				fmt.Println("instagram Data: ", data)
+				_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
+				if err != nil {
+					return &entity.ApplicationError{
+						Err: []error{errors.New("cannot download instagram object s3")},
+					}
+				}
+
 			} else {
 				fmt.Println("facebook Data: ", data)
 			}

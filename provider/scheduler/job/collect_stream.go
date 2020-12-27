@@ -8,10 +8,10 @@ import (
 )
 
 type SequenceAccount struct {
-	streamProvider provider.TwitterStreaming
+	streamProvider provider.AllProviderStreaming
 }
 
-func NewSequenceAccount(provider provider.TwitterStreaming) *SequenceAccount {
+func NewSequenceAccount(provider provider.AllProviderStreaming) *SequenceAccount {
 	return &SequenceAccount{streamProvider: provider}
 }
 

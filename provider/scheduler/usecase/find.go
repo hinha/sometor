@@ -59,7 +59,33 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 				}
 
 			} else if data.Media == "instagram" {
-				fmt.Println("instagram Data: ", data)
+				result, errCelery := celeryProvider.GetTaskResult("task.instagram_scrape_v1", 2, data)
+				if errCelery != nil {
+					return &entity.ApplicationError{
+						Err: []error{errors.New("task error")},
+					}
+				}
+				if result != nil {
+					switch data.Type {
+					case "account":
+						keyword = strings.ReplaceAll(data.Keyword, "@", "")
+					case "hashtag":
+						keyword = strings.ReplaceAll(data.Keyword, "#", "")
+					}
+
+					formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
+					osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
+					if err != nil {
+						fmt.Println(err)
+					}
+
+					err = s3Provider.PutObject(pathString, osFile)
+					if err != nil {
+						return &entity.ApplicationError{
+							Err: []error{errors.New("cannot put object s3")},
+						}
+					}
+				}
 			} else {
 				fmt.Println("facebook Data: ", data)
 			}

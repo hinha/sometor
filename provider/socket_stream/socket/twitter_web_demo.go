@@ -6,10 +6,10 @@ import (
 )
 
 type TwitterWebDemo struct {
-	socketProvider provider.SocketTwitter
+	socketProvider provider.SocketMedia
 }
 
-func NewTwitterDemoWeb(provider provider.SocketTwitter) *TwitterWebDemo {
+func NewTwitterDemoWeb(provider provider.SocketMedia) *TwitterWebDemo {
 	return &TwitterWebDemo{socketProvider: provider}
 }
 

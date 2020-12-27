@@ -10,66 +10,26 @@ import (
 	"time"
 )
 
-const (
-	// Time allowed to write the file to the client.
-	writeWait = 10 * time.Second
-
-	// Time allowed to read the next pong message from the client.
-	pongWait = 60 * time.Second
-
-	// Send pings to client with this period. Must be less than pongWait.
-	pingPeriod = (pongWait * 9) / 10
-
-	// Poll file for changes with this period.
-	filePeriod = 10 * time.Second
-
-	// TextMessage denotes a text data message. The text message payload is
-	// interpreted as UTF-8 encoded text data.
-	TextMessage = 1
-
-	// BinaryMessage denotes a binary data message.
-	BinaryMessage = 2
-
-	// CloseMessage denotes a close control message. The optional message
-	// payload contains a numeric code and text. Use the FormatCloseMessage
-	// function to format a close message payload.
-	CloseMessage = 8
-
-	// PingMessage denotes a ping control message. The optional message payload
-	// is UTF-8 encoded text.
-	PingMessage = 9
-
-	// PongMessage denotes a pong control message. The optional message payload
-	// is UTF-8 encoded text.
-	PongMessage = 10
-)
-
-// We set our Read and Write buffer sizes
-var upgrades = websocket.Upgrader{
-	ReadBufferSize:  1024,
-	WriteBufferSize: 1024,
-}
-
-type TwitterSocketServe struct {
+type InstagramSocketServe struct {
 	socketProvider provider.SocketMedia
 }
 
-func NewTwitterSocket(provider provider.SocketMedia) *TwitterSocketServe {
-	return &TwitterSocketServe{socketProvider: provider}
+func NewInstagramSocket(provider provider.SocketMedia) *InstagramSocketServe {
+	return &InstagramSocketServe{socketProvider: provider}
 }
 
 // Path return socket path
-func (t *TwitterSocketServe) Path() string {
-	return "/twitter"
+func (t *InstagramSocketServe) Path() string {
+	return "/instagram"
 }
 
 // Method return api method
-func (t *TwitterSocketServe) Method() string {
+func (t *InstagramSocketServe) Method() string {
 	return "GET"
 }
 
 // Handle health which always return 200
-func (t *TwitterSocketServe) Handle(context provider.SocketContext) {
+func (t *InstagramSocketServe) Handle(context provider.SocketContext) {
 	ws, err := upgrades.Upgrade(context.Response(), context.Request(), nil)
 	if err != nil {
 		panic(err)
@@ -95,7 +55,7 @@ func (t *TwitterSocketServe) Handle(context provider.SocketContext) {
 		} else {
 			// 1. get valid user id
 			// 2. select file by keyword valid
-			_, err := t.socketProvider.UserValid(context.Request().Context(), userID, keyword, "twitter")
+			_, err := t.socketProvider.UserValid(context.Request().Context(), userID, keyword, "instagram")
 			if err != nil {
 				msg, _ := json.Marshal(map[string]interface{}{
 					"errors":  err.Error(),
@@ -108,7 +68,7 @@ func (t *TwitterSocketServe) Handle(context provider.SocketContext) {
 				ws.Close()
 				return
 			} else {
-				go t.writer(context.Request().Context(), ws, lastMod, keyword, "twitter")
+				go t.writer(context.Request().Context(), ws, lastMod, keyword, "instagram")
 				ws.PingHandler()
 				err := t.reader(ws)
 				if err != nil {
@@ -120,7 +80,7 @@ func (t *TwitterSocketServe) Handle(context provider.SocketContext) {
 	}
 }
 
-func (t *TwitterSocketServe) writer(ctx context.Context, ws *websocket.Conn, lastMod time.Time, keyword, media string) {
+func (t *InstagramSocketServe) writer(ctx context.Context, ws *websocket.Conn, lastMod time.Time, keyword, media string) {
 	//lastError := ""
 	pingTicker := time.NewTicker(pingPeriod)
 	fileTicker := time.NewTicker(filePeriod)
@@ -161,7 +121,7 @@ func (t *TwitterSocketServe) writer(ctx context.Context, ws *websocket.Conn, las
 	}
 }
 
-func (t *TwitterSocketServe) reader(ws *websocket.Conn) error {
+func (t *InstagramSocketServe) reader(ws *websocket.Conn) error {
 	defer func() {
 		ws.Close()
 	}()

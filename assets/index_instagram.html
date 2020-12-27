@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ .title }}</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+<div>
+    <main role="main">
+        <h2>Watch</h2>
+    </main>
+    <div class="container-fluid">
+        <h2>Instagram</h2>
+        <div class="row justify-content-md-center pt-3">
+            <div class="col-md-12">
+                <div id="twitterContext" class="card-columns"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="/js/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="/js/bootstrap.js"></script>
+
+<script type="text/javascript">
+    var conn = new WebSocket("ws://localhost:7000/instagram?id=e1df6d4b5320d24c5400a756a81b72aa8e0aa6458b4a16&keyword=infocegatan_jogja");
+
+    conn.onclose = function(evt) {
+        data.textContent = 'Connection closed';
+    }
+    conn.onmessage = function(evt) {
+        var rawData = JSON.parse(evt.data);
+        for (let i = 0; i < rawData.results.length ; i++) {
+            var data = rawData.results;
+
+            var rowHTML = "<div class='card'>"
+            // rowHTML += ""
+            rowHTML += '<img class="card-img-top" src="' + data[i].user_profile_image_url +'" alt="Card image cap">'
+            rowHTML += '<div class="card-body">'
+            rowHTML += '<h5 class="card-title">'+ data[i].user_name + '</h5>'
+            rowHTML += '<p class="card-text">'+ data[i].text + '</p>'
+            rowHTML += '<p class="card-text">'+ data[i].str_updated_date + '</p>'
+            rowHTML += '<p class="card-text"><small class="text-muted">'+ data[i].created_at +'</small></p>'
+            rowHTML += '</div></div>'
+            $('#twitterContext').append(rowHTML)
+        }
+    }
+
+</script>
+
+</body>
+</html>

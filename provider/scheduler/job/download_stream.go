@@ -8,10 +8,10 @@ import (
 )
 
 type CollectStreamObject struct {
-	streamProvider provider.TwitterStreaming
+	streamProvider provider.AllProviderStreaming
 }
 
-func NewCollectStream(provider provider.TwitterStreaming) *CollectStreamObject {
+func NewCollectStream(provider provider.AllProviderStreaming) *CollectStreamObject {
 	return &CollectStreamObject{streamProvider: provider}
 }
 

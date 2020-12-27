@@ -20,9 +20,11 @@ func Fabricate(userProvider provider.StreamSequence) *SocketStream {
 func (s *SocketStream) FabricateSocket(engine provider.SocketEngine) {
 	engine.InjectSocket(socket.NewTwitterSocket(s))
 	engine.InjectSocket(socket.NewTwitterDemoWeb(s))
+	engine.InjectSocket(socket.NewInstagramSocket(s))
+	engine.InjectSocket(socket.NewInstagramDemoWeb(s))
 }
 
-func (s *SocketStream) FileReader(ctx context.Context, lastMod time.Time, media string, FileUser string) ([]byte, time.Time, error) {
+func (s *SocketStream) FileReader(ctx context.Context, lastMod time.Time, media string, FileUser string) ([]byte, time.Time, *entity.ApplicationError) {
 	files := usecase.FileTwitter{}
 	return files.Perform(ctx, media, FileUser, lastMod, s.userProvider)
 }

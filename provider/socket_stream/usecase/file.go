@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
 	"io/ioutil"
 	"os"
@@ -12,7 +14,7 @@ import (
 type FileTwitter struct {
 }
 
-func (t *FileTwitter) Perform(_ context.Context, media, fileUser string, lastMod time.Time, userProvider provider.StreamSequence) ([]byte, time.Time, error) {
+func (t *FileTwitter) Perform(_ context.Context, media, fileUser string, lastMod time.Time, userProvider provider.StreamSequence) ([]byte, time.Time, *entity.ApplicationError) {
 	//var twitterData entity.TwitterResult
 	//var portData []byte
 
@@ -26,10 +28,12 @@ func (t *FileTwitter) Perform(_ context.Context, media, fileUser string, lastMod
 	return p, mod, nil
 }
 
-func (t *FileTwitter) readFileIfModified(filename string, lastMod time.Time) ([]byte, time.Time, error) {
+func (t *FileTwitter) readFileIfModified(filename string, lastMod time.Time) ([]byte, time.Time, *entity.ApplicationError) {
 	fi, err := os.Stat(filename)
 	if err != nil {
-		return nil, lastMod, err
+		return nil, lastMod, &entity.ApplicationError{
+			Err: []error{errors.New("collecting data")},
+		}
 	}
 	if !fi.ModTime().After(lastMod) {
 		return nil, lastMod, nil
@@ -37,7 +41,9 @@ func (t *FileTwitter) readFileIfModified(filename string, lastMod time.Time) ([]
 
 	p, err := ioutil.ReadFile(filename)
 	if err != nil {
-		return nil, fi.ModTime(), err
+		return nil, fi.ModTime(), &entity.ApplicationError{
+			Err: []error{err},
+		}
 	}
 	return p, fi.ModTime(), nil
 }

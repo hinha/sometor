@@ -20,7 +20,7 @@ type ScheduleEngine interface {
 	Shutdown(ctx context.Context)
 }
 
-type TwitterStreaming interface {
+type AllProviderStreaming interface {
 	CollectAccount(ctx context.Context) *entity.ApplicationError
 	DownloadStream(ctx context.Context) *entity.ApplicationError
 }

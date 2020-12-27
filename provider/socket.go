@@ -128,8 +128,8 @@ type SocketEngine interface {
 	Shutdown(ctx context.Context) error
 }
 
-type SocketTwitter interface {
-	FileReader(ctx context.Context, lastMod time.Time, media string, FileUser string) ([]byte, time.Time, error)
+type SocketMedia interface {
+	FileReader(ctx context.Context, lastMod time.Time, media string, FileUser string) ([]byte, time.Time, *entity.ApplicationError)
 	Writer(ctx context.Context, ID string, FileUser string) // deprecate
 	UserValid(ctx context.Context, ID, keyword, media string) (entity.UserAccountSelectable, *entity.ApplicationError)
 }
