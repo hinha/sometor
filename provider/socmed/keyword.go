@@ -3,7 +3,6 @@ package socmed
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
 	"github.com/hinha/sometor/provider/socmed/api"
@@ -23,6 +22,8 @@ func FabricateKeyword(providerKeyword provider.StreamKeyword) *KeywordStream {
 func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewListStreamKeyword(k))
 	engine.InjectAPI(api.NewCreateStreamKeyword(k))
+	engine.InjectAPI(api.NewShowStreamData(k))
+	//engine.InjectAPI(api.NewUpdateStreamData(k))
 }
 
 func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
@@ -32,8 +33,6 @@ func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]ent
 
 func (k *KeywordStream) StreamKeywordCreate(ctx context.Context, request entity.StreamSequenceInsertable) (entity.StreamSequenceInsertable, *entity.ApplicationError) {
 	var mediaValid bool
-
-	fmt.Println(request)
 
 	switch request.Media {
 	case "twitter", "instagram", "facebook":
@@ -63,4 +62,14 @@ func (k *KeywordStream) StreamKeywordCreate(ctx context.Context, request entity.
 	}
 
 	return result, nil
+}
+
+func (k *KeywordStream) StreamKeywordShowDataTwitter(ctx context.Context, media string, ID string, Keyword string) (entity.TwitterResult, *entity.ApplicationError) {
+	streamTwitter := usecase.ShowStreamTwitter{}
+	return streamTwitter.Perform(ctx, media, ID, Keyword, k.providerKeyword)
+}
+
+func (k *KeywordStream) StreamKeywordShowDataInstagram(ctx context.Context, media string, ID string, Keyword string) (entity.InstagramResult, *entity.ApplicationError) {
+	streamTwitter := usecase.ShowStreamInstagram{}
+	return streamTwitter.Perform(ctx, media, ID, Keyword, k.providerKeyword)
 }

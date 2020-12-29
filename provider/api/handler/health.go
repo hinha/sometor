@@ -15,7 +15,7 @@ func NewHealth() *Health {
 
 // Path return api path
 func (h *Health) Path() string {
-	return "/v1/health"
+	return "/health"
 }
 
 // Method return api method
