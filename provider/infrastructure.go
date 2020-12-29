@@ -23,6 +23,7 @@ type CeleryClient interface {
 type S3Management interface {
 	PutObject(pathString string, file *os.File) error
 	DownloadObject(pathObject string) (string, error)
+	DownloadObjectUpdate(pathObject, fileName string) (string, error)
 }
 
 // DB is database interface wrapper for *sql.DB

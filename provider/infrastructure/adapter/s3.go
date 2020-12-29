@@ -75,3 +75,35 @@ func (s *S3) DownloadObject(pathObject string) (string, error) {
 	fmt.Println("Downloaded", file.Name(), numBytes, "bytes")
 	return file.Name(), nil
 }
+
+func (s *S3) DownloadObjectUpdate(pathObject, fileName string) (string, error) {
+	basePath, _ := os.Getwd()
+	path := fmt.Sprintf("%s/temp/update", basePath)
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.Mkdir(path, os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	file, err := os.Create(fmt.Sprintf("temp/update/%s", fileName))
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("Unable to open file %q, %v", pathObject, err))
+	}
+
+	defer file.Close()
+
+	downloader := s3manager.NewDownloader(s.session)
+	numBytes, err := downloader.Download(file,
+		&s3.GetObjectInput{
+			Bucket: aws.String(s.bucketName),
+			Key:    aws.String(pathObject),
+		})
+
+	if err != nil {
+		return "", errors.New(fmt.Sprintf("Unable to download item %q, %v", pathObject, err))
+	}
+
+	fmt.Println("Downloaded", file.Name(), numBytes, "bytes")
+	return file.Name(), nil
+}
