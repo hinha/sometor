@@ -31,3 +31,9 @@ func (s *StreamKeywordLocal) DownloadStream(ctx context.Context) *entity.Applica
 	find := usecase.FindObjectS3Job{}
 	return find.PerformCollection(ctx, s.userProvider, s.s3Provider)
 }
+
+func (s *StreamKeywordLocal) DownloadStreamUpdate(ctx context.Context) *entity.ApplicationError {
+	find := usecase.FindObjectS3Job{}
+	return find.PerformCollectionUpdate(ctx, s.userProvider, s.s3Provider)
+
+}

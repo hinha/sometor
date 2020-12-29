@@ -20,6 +20,7 @@ func FabricateKeywordServer(provider provider.StreamSequence, celery provider.Ce
 
 func (s *StreamKeywordServer) FabricateSchedule(engine provider.ScheduleEngine) {
 	engine.Inject(job.NewCollectStream(s))
+	engine.Inject(job.NewCollectStreamObjectUpdate(s))
 }
 
 func (s *StreamKeywordServer) CollectAccount(ctx context.Context) *entity.ApplicationError {
@@ -30,4 +31,9 @@ func (s *StreamKeywordServer) CollectAccount(ctx context.Context) *entity.Applic
 func (s *StreamKeywordServer) DownloadStream(ctx context.Context) *entity.ApplicationError {
 	find := usecase.FindObjectS3Job{}
 	return find.PerformCollection(ctx, s.userProvider, s.s3Provider)
+}
+
+func (s *StreamKeywordServer) DownloadStreamUpdate(ctx context.Context) *entity.ApplicationError {
+	find := usecase.FindObjectS3Job{}
+	return find.PerformCollectionUpdate(ctx, s.userProvider, s.s3Provider)
 }

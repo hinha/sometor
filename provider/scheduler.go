@@ -23,4 +23,5 @@ type ScheduleEngine interface {
 type AllProviderStreaming interface {
 	CollectAccount(ctx context.Context) *entity.ApplicationError
 	DownloadStream(ctx context.Context) *entity.ApplicationError
+	DownloadStreamUpdate(ctx context.Context) *entity.ApplicationError
 }
