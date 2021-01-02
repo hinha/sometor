@@ -16,7 +16,7 @@ func NewCollectStream(provider provider.AllProviderStreaming) *CollectStreamObje
 }
 
 func (s *CollectStreamObject) JobName() string {
-	return "download_stream"
+	return "download_stream_scraping"
 }
 
 func (s *CollectStreamObject) JobTime() string {
@@ -31,6 +31,7 @@ func (s *CollectStreamObject) Retry() uint {
 	return 3
 }
 
+// handle download object scraping
 func (s *CollectStreamObject) JobFunc(w *work.Job) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(60)*time.Second)
 	defer cancel()

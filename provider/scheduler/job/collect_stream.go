@@ -16,11 +16,11 @@ func NewSequenceAccount(provider provider.AllProviderStreaming) *SequenceAccount
 }
 
 func (s *SequenceAccount) JobName() string {
-	return "collect_stream"
+	return "collect_stream_scraping"
 }
 
 func (s *SequenceAccount) JobTime() string {
-	return "0 */5 * * * *"
+	return "0 */10 * * * *"
 }
 
 func (s *SequenceAccount) JobMiddleware(job *work.Job, next work.NextMiddlewareFunc) error {
@@ -31,6 +31,7 @@ func (s *SequenceAccount) Retry() uint {
 	return 3
 }
 
+// handle scraping to upload object
 func (s *SequenceAccount) JobFunc(w *work.Job) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(60)*time.Second)
 	defer cancel()
