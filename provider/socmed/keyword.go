@@ -23,7 +23,7 @@ func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewListStreamKeyword(k))
 	engine.InjectAPI(api.NewCreateStreamKeyword(k))
 	engine.InjectAPI(api.NewShowStreamData(k))
-	//engine.InjectAPI(api.NewUpdateStreamData(k))
+	engine.InjectAPI(api.NewUpdateStreamData(k))
 }
 
 func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
@@ -70,6 +70,16 @@ func (k *KeywordStream) StreamKeywordShowDataTwitter(ctx context.Context, media 
 }
 
 func (k *KeywordStream) StreamKeywordShowDataInstagram(ctx context.Context, media string, ID string, Keyword string) (entity.InstagramResult, *entity.ApplicationError) {
-	streamTwitter := usecase.ShowStreamInstagram{}
+	streamInstagram := usecase.ShowStreamInstagram{}
+	return streamInstagram.Perform(ctx, media, ID, Keyword, k.providerKeyword)
+}
+
+func (k *KeywordStream) StreamKeywordUpdateDataTwitter(ctx context.Context, media string, ID string, Keyword string) (entity.TwitterResult, *entity.ApplicationError) {
+	streamTwitter := usecase.UpdateStreamTwitter{}
 	return streamTwitter.Perform(ctx, media, ID, Keyword, k.providerKeyword)
+}
+
+func (k *KeywordStream) StreamKeywordUpdateDataInstagram(ctx context.Context, media string, ID string, Keyword string) (entity.InstagramResult, *entity.ApplicationError) {
+	streamInstagram := usecase.UpdateStreamInstagram{}
+	return streamInstagram.Perform(ctx, media, ID, Keyword, k.providerKeyword)
 }
