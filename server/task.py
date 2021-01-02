@@ -65,16 +65,16 @@ def twitter_scrape_v1(dataSequence):
         raise Exception("length of dataSequence")
 
     if task_request["type"] == "account":
-        since = datetime.now() - timedelta(days=7)
+        since = datetime.now() - timedelta(days=365)
         until = datetime.now()
     elif task_request["type"] == "hashtag":
         since = datetime.now() - timedelta(days=30)
         until = datetime.now()
 
-    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 130, proxy=False, proxy_dict={})
+    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 200, proxy=False, proxy_dict={})
     twitter_data = []
     if task_request["type"] == "account":
-        twitter_data = scrape.tweetAccount(task_request["keyword"].replace("@", ""), lang="id")
+        twitter_data = scrape.tweetAccount(task_request["keyword"])
     elif task_request["type"] == "hashtag":
         twitter_data = scrape.tweetHashtag(task_request["keyword"], lang="id")
 
@@ -97,8 +97,12 @@ def twitter_scrape_v1(dataSequence):
         tw["str_updated_date"] = timeago.format(nextTime, datetime.now())
         dataTList.append(tw)
 
+    lsUpdate = ""
+    if len(dataTList) > 0:
+        lsUpdate = dataTList[0]["created_at"]
+
     dataTList.sort(key=lambda k: k['timestamp'], reverse=True)
-    return {"results": twitter_data, "last_update": dataTList[0]["created_at"]}
+    return {"results": twitter_data, "last_update": lsUpdate}
 
 
 @app.task
@@ -114,7 +118,7 @@ def instagram_scrape_v1(dataSequence):
         raise Exception("length of dataSequence")
 
     if task_request["type"] == "account":
-        since = datetime.now() - timedelta(days=7)
+        since = datetime.now() - timedelta(days=365)
         until = datetime.now()
     elif task_request["type"] == "hashtag":
         since = datetime.now() - timedelta(days=30)
@@ -133,8 +137,12 @@ def instagram_scrape_v1(dataSequence):
         tw["str_updated_date"] = timeago.format(nextTime, datetime.now())
         dataTList.append(tw)
 
+    lsUpdate = ""
+    if len(dataTList) > 0:
+        lsUpdate = dataTList[0]["created_at"]
+
     dataTList.sort(key=lambda k: k['timestamp'], reverse=True)
-    return {"results": ig_data, "last_update": dataTList[0]["created_at"]}
+    return {"results": ig_data, "last_update": lsUpdate}
 
 @app.task
 def add_reflect(a, b):
