@@ -46,15 +46,33 @@ func (l *CreateStreamKeyword) Handle(context provider.APIContext) {
 		return
 	}
 
-	response, err := l.streamProvider.StreamKeywordCreate(context.Request().Context(), request)
-	if err != nil {
-		_ = context.JSON(err.HTTPStatus, map[string]interface{}{
-			"errors":  err.ErrorString(),
-			"message": err.Error(),
+	if len(request.Keyword) > 60 || len(request.UserAccountID) > 50 {
+		_ = context.JSON(http.StatusBadRequest, map[string]interface{}{
+			"errors":  []string{"bad request given by client"},
+			"message": "Bad request",
 		})
 		return
 	}
 
-	_ = context.JSON(http.StatusOK, map[string]interface{}{"data": response})
-	return
+	switch request.Media {
+	case "twitter", "instagram":
+		response, err := l.streamProvider.StreamKeywordCreate(context.Request().Context(), request)
+		if err != nil {
+			_ = context.JSON(err.HTTPStatus, map[string]interface{}{
+				"errors":  err.ErrorString(),
+				"message": err.Error(),
+			})
+			return
+		}
+
+		_ = context.JSON(http.StatusOK, map[string]interface{}{"data": response})
+		return
+	default:
+		_ = context.JSON(http.StatusNotFound, map[string]interface{}{
+			"errors":  []string{"request media not found"},
+			"message": "NotFound",
+		})
+		return
+	}
+
 }
