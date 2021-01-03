@@ -5,11 +5,15 @@ services:
     tty: true
     restart: unless-stopped
     image: sometor:1.0
+    volumes:
+    - sometor:/app
     command: [ "./main", "run:cron:server" ]
   stream-sometor-api:
     tty: true
     restart: unless-stopped
     image: sometor:1.0
+    volumes:
+      - sometor:/app
     ports:
       - "9091:9091"
     command: [ "./main", "run:api" ]
@@ -17,6 +21,12 @@ services:
     tty: true
     restart: unless-stopped
     image: sometor:1.0
+    volumes:
+      - sometor:/app
     ports:
       - "9081:9081"
     command: [ "./main", "run:socket" ]
+
+  volumes:
+    sometor:
+      external: true
