@@ -27,6 +27,6 @@ services:
       - "9081:9081"
     command: [ "./main", "run:socket" ]
 
-  volumes:
-    sometor:
-      external: true
+volumes:
+  sometor:
+    external: true
