@@ -44,3 +44,8 @@ func (s *StreamKeyword) CreateKeywordStream(ctx context.Context, request entity.
 	create := usecase.CreateKeywordStream{}
 	return create.Perform(ctx, request, s.db)
 }
+
+func (s *StreamKeyword) DeleteKeywordStream(ctx context.Context, ID int, userID string) (int, *entity.ApplicationError) {
+	deleteKeywordStream := usecase.DeleteKeywordStream{}
+	return deleteKeywordStream.Perform(ctx, ID, userID, s.db)
+}

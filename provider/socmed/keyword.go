@@ -22,6 +22,7 @@ func FabricateKeyword(providerKeyword provider.StreamKeyword) *KeywordStream {
 func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewListStreamKeyword(k))
 	engine.InjectAPI(api.NewCreateStreamKeyword(k))
+	engine.InjectAPI(api.NewDeleteStreamKeyword(k))
 	engine.InjectAPI(api.NewShowStreamData(k))
 	engine.InjectAPI(api.NewUpdateStreamData(k))
 }
@@ -62,6 +63,11 @@ func (k *KeywordStream) StreamKeywordCreate(ctx context.Context, request entity.
 	}
 
 	return result, nil
+}
+
+func (k *KeywordStream) StreamKeywordDelete(ctx context.Context, ID int, userID string) (int, *entity.ApplicationError) {
+	deleteKeyword := usecase.DeleteStream{}
+	return deleteKeyword.Perform(ctx, ID, userID, k.providerKeyword)
 }
 
 func (k *KeywordStream) StreamKeywordShowDataTwitter(ctx context.Context, media string, ID string, Keyword string) (entity.TwitterResult, *entity.ApplicationError) {

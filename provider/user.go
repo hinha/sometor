@@ -19,4 +19,5 @@ type StreamKeyword interface {
 	FindStreamKeywordID(ctx context.Context, ID int) (entity.StreamSequenceInsertable, *entity.ApplicationError)
 	CreateKeywordStream(ctx context.Context, request entity.StreamSequenceInsertable) (int, *entity.ApplicationError)
 	CreateOrFindStreamKeyword(ctx context.Context, request entity.StreamSequenceInsertable) (entity.StreamSequenceInsertable, *entity.ApplicationError)
+	DeleteKeywordStream(ctx context.Context, ID int, userID string) (int, *entity.ApplicationError)
 }
