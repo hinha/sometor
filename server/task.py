@@ -71,7 +71,7 @@ def twitter_scrape_v1(dataSequence):
         since = datetime.now() - timedelta(days=30)
         until = datetime.now()
 
-    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 200, proxy=False, proxy_dict={})
+    scrape = SnTweetScrape(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 120, proxy=False, proxy_dict={})
     twitter_data = []
     if task_request["type"] == "account":
         twitter_data = scrape.tweetAccount(task_request["keyword"])
@@ -124,7 +124,7 @@ def instagram_scrape_v1(dataSequence):
         since = datetime.now() - timedelta(days=30)
         until = datetime.now()
 
-    scrape = SnInstagramScraper(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 130, proxy=False, proxy_dict={})
+    scrape = SnInstagramScraper(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 80, proxy=False, proxy_dict={})
     ig_data = []
     if task_request["type"] == "account":
         ig_data = scrape.account(task_request["keyword"])
