@@ -20,4 +20,7 @@ type StreamKeyword interface {
 	CreateKeywordStream(ctx context.Context, request entity.StreamSequenceInsertable) (int, *entity.ApplicationError)
 	CreateOrFindStreamKeyword(ctx context.Context, request entity.StreamSequenceInsertable) (entity.StreamSequenceInsertable, *entity.ApplicationError)
 	DeleteKeywordStream(ctx context.Context, ID int, userID string) (int, *entity.ApplicationError)
+	CreateOauthTwitter(ctx context.Context, request entity.OUserTwitter) *entity.ApplicationError
+	FindIdOauthTwitter(ctx context.Context, Id string) (entity.OUserTwitterInfo, *entity.ApplicationError)
+	CreateOrFindOauthTwitter(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError)
 }

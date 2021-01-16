@@ -22,6 +22,11 @@ func init() {
 }
 
 func main() {
+	//CONSUMER_KEY = 'ROaXlUvhpKXxTDVTyXH3tKyOk'
+	//CONSUMER_SECRET = 'guuG1z0QLtUG6Aea28Hlub0hOgW5Ps0jh66u1YdSNhbUvyAP16'
+	//ACCESS_TOKEN = '1113019452319137794-2pn37DkirO4vcqDMa6lrIZaP5zCYtO'
+	//ACCESS_TOKEN_SECRET = 'GLhC7XyNmZKmvbjenhUFRmFMhN07Ce7JYAcsOybEtjD1T'
+
 	_ = gotenv.Load()
 	cmd := command.Fabricate()
 

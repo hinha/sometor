@@ -49,3 +49,18 @@ func (s *StreamKeyword) DeleteKeywordStream(ctx context.Context, ID int, userID 
 	deleteKeywordStream := usecase.DeleteKeywordStream{}
 	return deleteKeywordStream.Perform(ctx, ID, userID, s.db)
 }
+
+func (s *StreamKeyword) CreateOauthTwitter(ctx context.Context, request entity.OUserTwitter) *entity.ApplicationError {
+	createAuth := usecase.CreateOauthTw{}
+	return createAuth.Perform(ctx, request, s.db)
+}
+
+func (s *StreamKeyword) FindIdOauthTwitter(ctx context.Context, Id string) (entity.OUserTwitterInfo, *entity.ApplicationError) {
+	findID := usecase.FindByIDOauthTw{}
+	return findID.Perform(ctx, Id, s.db)
+}
+
+func (s *StreamKeyword) CreateOrFindOauthTwitter(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError) {
+	createOfFind := usecase.CreateOrFindOauthTw{}
+	return createOfFind.Perform(ctx, request, s)
+}
