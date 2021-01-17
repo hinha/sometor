@@ -18,4 +18,5 @@ require (
 	github.com/subosito/gotenv v1.2.0
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	gopkg.in/validator.v2 v2.0.0-20200605151824-2b28d334fa05
 )

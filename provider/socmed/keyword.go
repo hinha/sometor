@@ -25,6 +25,7 @@ func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewDeleteStreamKeyword(k))
 	engine.InjectAPI(api.NewShowStreamData(k))
 	engine.InjectAPI(api.NewUpdateStreamData(k))
+	engine.InjectAPI(api.NewOauthCallback(k))
 }
 
 func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
@@ -88,4 +89,9 @@ func (k *KeywordStream) StreamKeywordUpdateDataTwitter(ctx context.Context, medi
 func (k *KeywordStream) StreamKeywordUpdateDataInstagram(ctx context.Context, media string, ID string, Keyword string) (entity.InstagramResult, *entity.ApplicationError) {
 	streamInstagram := usecase.UpdateStreamInstagram{}
 	return streamInstagram.Perform(ctx, media, ID, Keyword, k.providerKeyword)
+}
+
+func (k *KeywordStream) TwitterOauthToken(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError) {
+	oauth := usecase.ProviderOauthTwitter{}
+	return oauth.Perform(ctx, request, k.providerKeyword)
 }
