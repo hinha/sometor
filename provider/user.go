@@ -22,6 +22,8 @@ type StreamKeyword interface {
 	DeleteKeywordStream(ctx context.Context, ID int, userID string) (int, *entity.ApplicationError)
 	CreateOauthTwitter(ctx context.Context, request entity.OUserTwitter) *entity.ApplicationError
 	FindIdOauthTwitter(ctx context.Context, Id string) (entity.OUserTwitterInfo, *entity.ApplicationError)
+	FindIDKeyOauthTwitter(ctx context.Context, Id, userID string) (entity.OUserTwitterKey, *entity.ApplicationError)
 	CreateOrFindOauthTwitter(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError)
 	FindAllOauthTwitter(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError)
+	CreateTweetPostOauth(ctx context.Context, request entity.OFeedTwitter, statusID, username string) *entity.ApplicationError
 }

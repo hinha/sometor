@@ -60,6 +60,11 @@ func (s *StreamKeyword) FindIdOauthTwitter(ctx context.Context, Id string) (enti
 	return findID.Perform(ctx, Id, s.db)
 }
 
+func (s *StreamKeyword) FindIDKeyOauthTwitter(ctx context.Context, Id, userID string) (entity.OUserTwitterKey, *entity.ApplicationError) {
+	findId := usecase.FindByIdKeyOauthTw{}
+	return findId.Perform(ctx, Id, userID, s.db)
+}
+
 func (s *StreamKeyword) CreateOrFindOauthTwitter(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError) {
 	createOfFind := usecase.CreateOrFindOauthTw{}
 	return createOfFind.Perform(ctx, request, s)
@@ -68,4 +73,9 @@ func (s *StreamKeyword) CreateOrFindOauthTwitter(ctx context.Context, request en
 func (s *StreamKeyword) FindAllOauthTwitter(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError) {
 	findAll := usecase.FindAllOauthTw{}
 	return findAll.Perform(ctx, userID, s.db)
+}
+
+func (s *StreamKeyword) CreateTweetPostOauth(ctx context.Context, request entity.OFeedTwitter, statusID, username string) *entity.ApplicationError {
+	createPost := usecase.TwitterCreatePostOauth{}
+	return createPost.Perform(ctx, request, statusID, username, s.db)
 }
