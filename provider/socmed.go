@@ -15,4 +15,5 @@ type SocmedKeywordAPI interface {
 	StreamKeywordUpdateDataInstagram(ctx context.Context, media string, ID string, Keyword string) (entity.InstagramResult, *entity.ApplicationError)
 	TwitterOauthToken(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError)
 	TwitterListOauthAccount(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError)
+	TwitterPostFeedOauth(ctx context.Context, request entity.OFeedTwitter) *entity.ApplicationError
 }

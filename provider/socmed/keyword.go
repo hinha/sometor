@@ -27,6 +27,7 @@ func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewUpdateStreamData(k))
 	engine.InjectAPI(api.NewOauthCallback(k))
 	engine.InjectAPI(api.NewListAccountTwitterOauth(k))
+	engine.InjectAPI(api.NewPostFeedTwitter(k))
 }
 
 func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
@@ -100,4 +101,9 @@ func (k *KeywordStream) TwitterOauthToken(ctx context.Context, request entity.OU
 func (k *KeywordStream) TwitterListOauthAccount(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError) {
 	account := usecase.ListAccountTwitterOauth{}
 	return account.Perform(ctx, userID, k.providerKeyword)
+}
+
+func (k *KeywordStream) TwitterPostFeedOauth(ctx context.Context, request entity.OFeedTwitter) *entity.ApplicationError {
+	postFeed := usecase.PostFeedTwitterOauth{}
+	return postFeed.Perform(ctx, request, k.providerKeyword)
 }

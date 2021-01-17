@@ -6,6 +6,7 @@ require (
 	github.com/aws/aws-sdk-go v1.36.13
 	github.com/bradfitz/slice v0.0.0-20180809154707-2b758aa73013
 	github.com/dghubble/go-twitter v0.0.0-20201011215211-4b180d0cc78d
+	github.com/dghubble/oauth1 v0.7.0
 	github.com/go-sql-driver/mysql v1.5.0
 	github.com/gocelery/gocelery v0.0.0-20201111034804-825d89059344
 	github.com/gocraft/work v0.5.1
