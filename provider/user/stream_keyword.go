@@ -64,3 +64,8 @@ func (s *StreamKeyword) CreateOrFindOauthTwitter(ctx context.Context, request en
 	createOfFind := usecase.CreateOrFindOauthTw{}
 	return createOfFind.Perform(ctx, request, s)
 }
+
+func (s *StreamKeyword) FindAllOauthTwitter(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError) {
+	findAll := usecase.FindAllOauthTw{}
+	return findAll.Perform(ctx, userID, s.db)
+}

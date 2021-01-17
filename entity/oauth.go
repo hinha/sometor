@@ -16,7 +16,7 @@ type OUserTwitter struct {
 }
 
 type OUserTwitterInfo struct {
-	UserID          string `json:"user_id"`
+	UserTweetID     string `json:"user_tweet_id"`
 	Name            string `json:"name"`
 	Username        string `json:"username"`
 	ProfileImageURL string `json:"profile_image_url"`

@@ -23,4 +23,5 @@ type StreamKeyword interface {
 	CreateOauthTwitter(ctx context.Context, request entity.OUserTwitter) *entity.ApplicationError
 	FindIdOauthTwitter(ctx context.Context, Id string) (entity.OUserTwitterInfo, *entity.ApplicationError)
 	CreateOrFindOauthTwitter(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError)
+	FindAllOauthTwitter(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError)
 }
