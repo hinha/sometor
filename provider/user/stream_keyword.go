@@ -79,3 +79,8 @@ func (s *StreamKeyword) CreateTweetPostOauth(ctx context.Context, request entity
 	createPost := usecase.TwitterCreatePostOauth{}
 	return createPost.Perform(ctx, request, statusID, username, s.db)
 }
+
+func (s *StreamKeyword) FindAllStatusesTweetOauth(ctx context.Context, userTweetID string) ([]entity.OFeedTwitterInfo, *entity.ApplicationError) {
+	findStatuses := usecase.FindAllStatusesOauthTweet{}
+	return findStatuses.Perform(ctx, userTweetID, s.db)
+}
