@@ -16,4 +16,5 @@ type SocmedKeywordAPI interface {
 	TwitterOauthToken(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError)
 	TwitterListOauthAccount(ctx context.Context, userID string) ([]entity.OUserTwitterInfo, *entity.ApplicationError)
 	TwitterPostFeedOauth(ctx context.Context, request entity.OFeedTwitter) *entity.ApplicationError
+	TwitterListStatuses(ctx context.Context, UserTweetID, UserID string) ([]entity.OFeedTwitterInfo, *entity.ApplicationError)
 }
