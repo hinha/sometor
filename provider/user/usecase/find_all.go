@@ -12,7 +12,7 @@ type StreamRequestAll struct{}
 
 func (s *StreamRequestAll) Perform(ctx context.Context, db provider.DB) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
 	var data []entity.StreamSequenceInitTable
-	rows, err := db.QueryContext(ctx, "find-stream-user", "select id,keyword,media,type,created_at,user_account_id from stream_sequence_account order by created_at DESC")
+	rows, err := db.QueryContext(ctx, "find-stream-user", "select id,keyword,media,type,created_at,user_account_id from stream_sequence_account group by keyword order by created_at DESC")
 	if err != nil {
 		return data, &entity.ApplicationError{
 			Err:        []error{errors.New("account not found")},
