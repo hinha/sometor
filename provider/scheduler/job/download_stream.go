@@ -20,7 +20,7 @@ func (s *CollectStreamObject) JobName() string {
 }
 
 func (s *CollectStreamObject) JobTime() string {
-	return "0 */50 * * * *" // Tambah per 3 jam
+	return "0 */10 * * * *" // Tambah per 3 jam
 }
 
 func (s *CollectStreamObject) JobMiddleware(job *work.Job, next work.NextMiddlewareFunc) error {
