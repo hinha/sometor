@@ -36,6 +36,12 @@ type OFeedTwitter struct {
 	Text        string `json:"text"`
 }
 
+// type multi
+type OFeedTwitterAll struct {
+	UserID string `json:"user_id"`
+	Text   string `json:"text"`
+}
+
 type OFeedTwitterInfo struct {
 	StatusesID string    `json:"statuses_id"`
 	Text       string    `json:"text"`

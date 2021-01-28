@@ -30,6 +30,8 @@ func (k *KeywordStream) FabricateAPI(engine provider.APIEngine) {
 	engine.InjectAPI(api.NewPostFeedTwitter(k))
 	engine.InjectAPI(api.NewListStatusesTwitterOauth(k))
 	engine.InjectAPI(api.NewDelAccountTwitterOauth(k))
+	engine.InjectAPI(api.NewPostFeedTwitterMulti(k))
+	//engine.InjectAPI(api.NewOauthClientToken(k))
 }
 
 func (k *KeywordStream) StreamKeywordList(ctx context.Context, ID string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
@@ -118,4 +120,9 @@ func (k *KeywordStream) TwitterListStatuses(ctx context.Context, UserTweetID, Us
 func (k *KeywordStream) TwitterDelAccountOauth(ctx context.Context, UserTweetID, UserID string) (int, *entity.ApplicationError) {
 	delAccount := usecase.DelAccountTwitterOauth{}
 	return delAccount.Perform(ctx, UserTweetID, UserID, k.providerKeyword)
+}
+
+func (k *KeywordStream) TwitterPostFeedAllOauth(ctx context.Context, request entity.OFeedTwitterAll) *entity.ApplicationError {
+	postFeed := usecase.PostFeedTwitterOauthMulti{}
+	return postFeed.Perform(ctx, request, k.providerKeyword)
 }
