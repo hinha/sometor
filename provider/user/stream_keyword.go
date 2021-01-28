@@ -89,3 +89,8 @@ func (s *StreamKeyword) DeleteTweetAccountOauth(ctx context.Context, userTweetID
 	delAccount := usecase.TwitterDelAccountOauth{}
 	return delAccount.Perform(ctx, userTweetID, userID, s.db)
 }
+
+func (s *StreamKeyword) FindAllIDKeyOauthTwitter(ctx context.Context, userID string) ([]entity.OUserTwitterKey, *entity.ApplicationError) {
+	findAllKey := usecase.FindAllOauthTwKey{}
+	return findAllKey.Perform(ctx, userID, s.db)
+}
