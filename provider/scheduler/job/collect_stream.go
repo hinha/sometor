@@ -20,7 +20,7 @@ func (s *SequenceAccount) JobName() string {
 }
 
 func (s *SequenceAccount) JobTime() string {
-	return "0 */10 * * * *"
+	return "0 */10 * * * *" // Scraping Local
 }
 
 func (s *SequenceAccount) JobMiddleware(job *work.Job, next work.NextMiddlewareFunc) error {
