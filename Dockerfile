@@ -26,5 +26,11 @@ RUN go mod download
 # Build the Go app
 RUN go build -o main main.go
 
+# Start cloning python program
+COPY server .
+FROM python:3.7
+
+RUN pip install -r requirements.txt
+
 EXPOSE 9081
 EXPOSE 9091
