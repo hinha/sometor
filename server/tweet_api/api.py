@@ -22,7 +22,7 @@ api = twitter.Api(consumer_key=config("TWITTER_CONSUMER_KEY"),
 
 senti = sentistrength.sentistrength()
 
-client = redis.StrictRedis(host=os.environ.get("REDIS_HOST", "localhost"), port=6379, db=2)
+client = redis.StrictRedis(host=config("REDIS_HOST"), port=6379, db=2)
 
 
 # client = redis.StrictRedis("127.0.0.1",port=6379, db=10)
