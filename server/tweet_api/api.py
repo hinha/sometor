@@ -102,7 +102,7 @@ class TweetSearch(object):
             "user_statuses_count": users.statuses_count,
             "user_url": users.url if users.url else "",
             "user_created_at": users.created_at,
-            "profile_image_url_https": users.profile_image_url_https,
+            "user_profile_image_url": users.profile_image_url_https,
         }
         users_timeline = api.GetUserTimeline(user_id=users.id, exclude_replies=True, count=limit + 1)
 

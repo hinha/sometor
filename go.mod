@@ -14,10 +14,11 @@ require (
 	github.com/google/uuid v1.1.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/labstack/echo/v4 v4.1.17
+	github.com/markbates/goth v1.66.1
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/spf13/cobra v1.1.1
 	github.com/subosito/gotenv v1.2.0
 	go4.org v0.0.0-20201209231011-d4a079459e60 // indirect
-	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
+	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
 	gopkg.in/validator.v2 v2.0.0-20200605151824-2b28d334fa05
 )
