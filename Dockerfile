@@ -1,4 +1,4 @@
-FROM golang:1.14.10-alpine
+FROM golang:1.14.10-alpine AS stage_build
 
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh gcc g++ libc-dev
@@ -27,8 +27,8 @@ RUN go mod download
 RUN go build -o main main.go
 
 # Start cloning python program
-COPY server .
 FROM python:3.7
+COPY --from=stage_build /app/server .
 
 RUN pip install -r requirements.txt
 

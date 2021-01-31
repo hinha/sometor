@@ -27,6 +27,19 @@ services:
       - "9081:9081"
     command: [ "./main", "run:socket" ]
 
+  stream-sometor-cron-local:
+    tty: true
+    restart: unless-stopped
+    image: sometor:1.1
+    depends_on:
+      - stream-sometor-celery
+    command: [ "./main", "run:cron:local" ]
+
+  stream-sometor-celery:
+    restart: unless-stopped
+    image: sometor:1.1
+    command: [ "celery", "-A task worker --concurrency=3 -l info" ]
+
 volumes:
   sometor:
     external: true
