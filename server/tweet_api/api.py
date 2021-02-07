@@ -46,8 +46,8 @@ class TweetSearch(object):
                 sentiment = senti.main(text_clean)
                 statusesV = {
                     "name": result.user.name,
-                    "user_profile_is_verified": result.user.verified,
-                    "user_name": result.user.screen_name,
+                    "user_verified": result.user.verified,
+                    "screen_name": result.user.screen_name,
                     "full_text_norm": self.__remove_url(result.full_text),
                     "full_text_clean": text_clean,
                     "text_sentiment": sentiment,
@@ -62,7 +62,7 @@ class TweetSearch(object):
                     "lang": result.lang,
                     "retweet_count": result.retweet_count,
                     "permalink": f"https://twitter.com/{result.user.id}/status/{result.id}",
-                    "total_engagement": result.retweet_count + result.favorite_count + result.user.statuses_count,
+                    "engagement": result.retweet_count + result.favorite_count + result.user.statuses_count,
 
                     "user_description": result.user.description,
                     "user_location": result.user.location,
@@ -88,9 +88,9 @@ class TweetSearch(object):
         # users = api.GetUsersSearch(term=name, page=1, count=10)
         users = api.GetUser(screen_name=name)
         views = {
-            "user_profile_is_verified": users.verified,
+            "user_verified": users.verified,
             "name": users.name,
-            "user_name": users.screen_name,
+            "screen_name": users.screen_name,
             "user_description": users.description,
             "user_location": users.location,
             "user_favourites_count": users.favourites_count,
@@ -143,7 +143,7 @@ class TweetSearch(object):
                     "lang": statuses.lang,
                     "retweet_count": statuses.retweet_count,
                     "permalink": f"https://twitter.com/{statuses.user.id}/status/{statuses.id}",
-                    "total_engagement": statuses.retweet_count + statuses.favorite_count + statuses.user.statuses_count
+                    "engagement": statuses.retweet_count + statuses.favorite_count + statuses.user.statuses_count
                 }
                 statusesV.update(views)
 
