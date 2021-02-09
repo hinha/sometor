@@ -45,9 +45,9 @@ class TweetSearch(object):
                 text_clean = cleansing.clean_text_light(text_norm)
                 sentiment = senti.main(text_clean)
                 statusesV = {
-                    "name": result.user.name,
+                    "screen_name": result.user.name,
                     "user_verified": result.user.verified,
-                    "screen_name": result.user.screen_name,
+                    "user_name": result.user.screen_name,
                     "full_text_norm": self.__remove_url(result.full_text),
                     "full_text_clean": text_clean,
                     "text_sentiment": sentiment,
@@ -89,8 +89,8 @@ class TweetSearch(object):
         users = api.GetUser(screen_name=name)
         views = {
             "user_verified": users.verified,
-            "name": users.name,
-            "screen_name": users.screen_name,
+            "screen_name": users.name,
+            "user_name": users.screen_name,
             "user_description": users.description,
             "user_location": users.location,
             "user_favourites_count": users.favourites_count,

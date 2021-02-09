@@ -14,6 +14,7 @@ from tweet_api.api import TweetSearch
 from orakarik.scrape.tweet_scrape import SnTweetScrape
 from orakarik.scrape.ig_scrape import SnInstagramScraper
 # from . import summary
+import orakarik.scrape.base as Base
 from summary import Summary
 
 app = Celery(
@@ -168,10 +169,14 @@ def instagram_scrape_v1(dataSequence):
 
     scrape = SnInstagramScraper(since.strftime('%Y-%m-%d'), until.strftime('%Y-%m-%d'), 80, proxy=False, proxy_dict={})
     ig_data = []
-    if task_request["type"] == "account":
-        ig_data = scrape.account(task_request["keyword"])
-    else:
-        ig_data = scrape.hashtag(task_request["keyword"])
+    try:
+        if task_request["type"] == "account":
+            ig_data = scrape.account(task_request["keyword"])
+        else:
+            ig_data = scrape.hashtag(task_request["keyword"])
+    except (Exception, Base.ScraperException) as e:
+        print(e)
+        return {"errors": str(e)}
 
     dataTList = []
     for tw in ig_data:
