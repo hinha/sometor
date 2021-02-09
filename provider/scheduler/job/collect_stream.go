@@ -33,7 +33,7 @@ func (s *SequenceAccount) Retry() uint {
 
 // handle scraping to upload object
 func (s *SequenceAccount) JobFunc(w *work.Job) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(60)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(2)*time.Minute)
 	defer cancel()
 
 	err := s.streamProvider.CollectAccount(ctx)

@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type FindCollectionAccount struct{}
@@ -32,9 +34,7 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 			if data.Media == "twitter" {
 				result, errCelery := celeryProvider.GetTaskResult("task.twitter_scrape_v1", 1, data)
 				if errCelery != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("task error")},
-					}
+					logrus.Error(errCelery)
 				}
 				if result != nil {
 					switch data.Type {
@@ -61,9 +61,7 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 			} else if data.Media == "instagram" {
 				result, errCelery := celeryProvider.GetTaskResult("task.instagram_scrape_v1", 2, data)
 				if errCelery != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("task error")},
-					}
+					logrus.Error(errCelery)
 				}
 				if result != nil {
 					switch data.Type {
@@ -86,6 +84,8 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 						}
 					}
 				}
+
+				time.Sleep(5 * time.Second)
 			} else {
 				fmt.Println("facebook Data: ", data)
 			}
