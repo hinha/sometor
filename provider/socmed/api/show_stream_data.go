@@ -52,6 +52,13 @@ func (s *ShowStreamData) Handle(context provider.APIContext) {
 	case "twitter":
 		data, errProvider := s.streamProvider.StreamKeywordShowDataTwitter(context.Request().Context(), mediaType, userID, userKeyword)
 		if errProvider != nil {
+			if errProvider.HTTPStatus == http.StatusOK {
+				_ = context.JSON(http.StatusOK, map[string]interface{}{
+					"data": data,
+				})
+				return
+			}
+
 			_ = context.JSON(errProvider.HTTPStatus, map[string]interface{}{
 				"errors":  errProvider.ErrorString(),
 				"message": errProvider.Error(),
@@ -66,6 +73,12 @@ func (s *ShowStreamData) Handle(context provider.APIContext) {
 	case "instagram":
 		data, errProvider := s.streamProvider.StreamKeywordShowDataInstagram(context.Request().Context(), mediaType, userID, userKeyword)
 		if errProvider != nil {
+			if errProvider.HTTPStatus == http.StatusOK {
+				_ = context.JSON(http.StatusOK, map[string]interface{}{
+					"data": data,
+				})
+				return
+			}
 			_ = context.JSON(errProvider.HTTPStatus, map[string]interface{}{
 				"errors":  errProvider.ErrorString(),
 				"message": errProvider.Error(),

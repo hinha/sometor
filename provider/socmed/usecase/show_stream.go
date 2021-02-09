@@ -7,6 +7,7 @@ import (
 	"github.com/hinha/sometor/entity"
 	"github.com/hinha/sometor/provider"
 	"io/ioutil"
+	"net/http"
 )
 
 type ShowStreamTwitter struct{}
@@ -21,7 +22,8 @@ func (s *ShowStreamTwitter) Perform(ctx context.Context, media, userId, userKeyw
 	p, err := ioutil.ReadFile(formatFile)
 	if err != nil {
 		return entity.TwitterResult{}, &entity.ApplicationError{
-			Err: []error{err},
+			Err:        []error{err},
+			HTTPStatus: http.StatusOK,
 		}
 	}
 
@@ -43,7 +45,8 @@ func (s *ShowStreamInstagram) Perform(ctx context.Context, media, userId, userKe
 	p, err := ioutil.ReadFile(formatFile)
 	if err != nil {
 		return entity.InstagramResult{}, &entity.ApplicationError{
-			Err: []error{err},
+			Err:        []error{err},
+			HTTPStatus: http.StatusOK,
 		}
 	}
 
