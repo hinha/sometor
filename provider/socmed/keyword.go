@@ -123,6 +123,11 @@ func (k *KeywordStream) TwitterDelAccountOauth(ctx context.Context, UserTweetID,
 }
 
 func (k *KeywordStream) TwitterPostFeedAllOauth(ctx context.Context, request entity.OFeedTwitterAll) *entity.ApplicationError {
-	postFeed := usecase.PostFeedTwitterOauthMulti{}
-	return postFeed.Perform(ctx, request, k.providerKeyword)
+	if request.ImageBase64 == "" {
+		postFeed := usecase.PostFeedTwitterOauthMulti{}
+		return postFeed.Perform(ctx, request, k.providerKeyword)
+	} else {
+		postFeedImg := usecase.PostImageFeedTweetMulti{}
+		return postFeedImg.Perform(ctx, request, k.providerKeyword)
+	}
 }
