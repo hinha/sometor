@@ -44,8 +44,9 @@ type OFeedTwitterAll struct {
 }
 
 type OFeedTwitterInfo struct {
-	StatusesID string    `json:"statuses_id"`
-	Text       string    `json:"text"`
-	Permalink  string    `json:"permalink"`
-	CreatedAt  time.Time `json:"created_at"`
+	StatusesID    string    `json:"statuses_id"`
+	Text          string    `json:"text"`
+	Permalink     string    `json:"permalink"`
+	ImageUrlHttps string    `json:"image_url_https"`
+	CreatedAt     time.Time `json:"created_at"`
 }
