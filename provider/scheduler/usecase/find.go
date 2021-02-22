@@ -27,68 +27,99 @@ func (f *FindCollectionAccount) PerformCollection(ctx context.Context, userProvi
 	// flow
 	//  cron <- db -> infra task -> s3
 	var keyword string
-	if collections, err := userProvider.FindAllUser(ctx); err != nil {
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "facebook"); err != nil {
 		return err
 	} else {
 		for _, data := range collections {
-			if data.Media == "twitter" {
-				result, errCelery := celeryProvider.GetTaskResult("task.twitter_scrape_v1", 1, data)
-				if errCelery != nil {
-					logrus.Error(errCelery)
-				}
-				if result != nil {
-					switch data.Type {
-					case "account":
-						keyword = strings.ReplaceAll(data.Keyword, "@", "")
-					case "hashtag":
-						keyword = strings.ReplaceAll(data.Keyword, "#", "")
-					}
-
-					formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
-					osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
-					if err != nil {
-						fmt.Println(err)
-					}
-
-					err = s3Provider.PutObject(pathString, osFile)
-					if err != nil {
-						return &entity.ApplicationError{
-							Err: []error{errors.New("cannot put object s3")},
-						}
-					}
-				}
-
-			} else if data.Media == "instagram" {
-				result, errCelery := celeryProvider.GetTaskResult("task.instagram_scrape_v1", 2, data)
-				if errCelery != nil {
-					logrus.Error(errCelery)
-				}
-				if result != nil {
-					switch data.Type {
-					case "account":
-						keyword = strings.ReplaceAll(data.Keyword, "@", "")
-					case "hashtag":
-						keyword = strings.ReplaceAll(data.Keyword, "#", "")
-					}
-
-					formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
-					osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
-					if err != nil {
-						fmt.Println(err)
-					}
-
-					err = s3Provider.PutObject(pathString, osFile)
-					if err != nil {
-						return &entity.ApplicationError{
-							Err: []error{errors.New("cannot put object s3")},
-						}
-					}
-				}
-
-				time.Sleep(5 * time.Second)
-			} else {
-				fmt.Println("facebook Data: ", data)
+			//facebook_scraper_v1
+			result, errCelery := celeryProvider.GetTaskResult("task.facebook_scraper_v1", 2, data)
+			if errCelery != nil {
+				logrus.Error(errCelery)
 			}
+
+			if result != nil {
+				formatName := fmt.Sprintf("%s-%s", "fanpage", data.Keyword)
+				osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				err = s3Provider.PutObject(pathString, osFile)
+				if err != nil {
+					return &entity.ApplicationError{
+						Err: []error{errors.New("cannot put object s3")},
+					}
+				}
+			}
+			time.Sleep(5 * time.Second)
+		}
+	}
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "twitter"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			result, errCelery := celeryProvider.GetTaskResult("task.twitter_scrape_v1", 1, data)
+			if errCelery != nil {
+				logrus.Error(errCelery)
+			}
+
+			if result != nil {
+				switch data.Type {
+				case "account":
+					keyword = strings.ReplaceAll(data.Keyword, "@", "")
+				case "hashtag":
+					keyword = strings.ReplaceAll(data.Keyword, "#", "")
+				}
+
+				formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
+				osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				err = s3Provider.PutObject(pathString, osFile)
+				if err != nil {
+					return &entity.ApplicationError{
+						Err: []error{errors.New("cannot put object s3")},
+					}
+				}
+			}
+		}
+	}
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "instagram"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			result, errCelery := celeryProvider.GetTaskResult("task.instagram_scrape_v1", 2, data)
+			if errCelery != nil {
+				logrus.Error(errCelery)
+			}
+			if result != nil {
+				switch data.Type {
+				case "account":
+					keyword = strings.ReplaceAll(data.Keyword, "@", "")
+				case "hashtag":
+					keyword = strings.ReplaceAll(data.Keyword, "#", "")
+				}
+
+				formatName := fmt.Sprintf("%s-%s", data.Type, keyword)
+				osFile, pathString, err := f.CreateFileFromMap(formatName, data.Media, result)
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				err = s3Provider.PutObject(pathString, osFile)
+				if err != nil {
+					return &entity.ApplicationError{
+						Err: []error{errors.New("cannot put object s3")},
+					}
+				}
+			}
+
+			time.Sleep(5 * time.Second)
 		}
 	}
 

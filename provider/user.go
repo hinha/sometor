@@ -7,7 +7,8 @@ import (
 
 type StreamSequence interface {
 	FindByUserID(ctx context.Context, ID string) (entity.StreamSequenceInitTable, *entity.ApplicationError)
-	FindAllUser(ctx context.Context) ([]entity.StreamSequenceInitTable, *entity.ApplicationError)
+	FindAllUser(ctx context.Context) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) // deprecated
+	FindAllUserMedia(ctx context.Context, media string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError)
 	FindByUserAccountIDInfo(ctx context.Context, ID string) (entity.UserAccountSelectable, *entity.ApplicationError)
 	FindByKeywordStreamInfo(ctx context.Context, keyword, media string) (entity.StreamSequenceInitTable, *entity.ApplicationError)
 }

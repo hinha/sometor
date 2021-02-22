@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"errors"
+	"github.com/dghubble/go-twitter/twitter"
 	"github.com/gocelery/gocelery"
 	"os"
 )
@@ -12,6 +13,10 @@ import (
 
 // ErrDBNotFound returned when there is no data found in the database
 var ErrDBNotFound = errors.New("data not found")
+
+type TwitterAuthConfig interface {
+	Client() *twitter.Client
+}
 
 type CeleryClient interface {
 	Task(taskName string, args interface{}) (*gocelery.AsyncResult, error)

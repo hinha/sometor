@@ -25,6 +25,11 @@ func (s *StreamSequence) FindAllUser(ctx context.Context) ([]entity.StreamSequen
 	return findAll.Perform(ctx, s.db)
 }
 
+func (s *StreamSequence) FindAllUserMedia(ctx context.Context, media string) ([]entity.StreamSequenceInitTable, *entity.ApplicationError) {
+	findAllByMedia := usecase.StreamRequestMedia{}
+	return findAllByMedia.Perform(ctx, media, s.db)
+}
+
 func (s *StreamSequence) FindByUserAccountIDInfo(ctx context.Context, ID string) (entity.UserAccountSelectable, *entity.ApplicationError) {
 	findUser := usecase.UserAccountID{}
 	return findUser.PerformInfo(ctx, ID, s.db)

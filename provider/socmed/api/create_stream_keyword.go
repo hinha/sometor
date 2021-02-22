@@ -55,7 +55,7 @@ func (l *CreateStreamKeyword) Handle(context provider.APIContext) {
 	}
 
 	switch request.Media {
-	case "twitter", "instagram":
+	case "twitter", "instagram", "facebook":
 		response, err := l.streamProvider.StreamKeywordCreate(context.Request().Context(), request)
 		if err != nil {
 			_ = context.JSON(err.HTTPStatus, map[string]interface{}{

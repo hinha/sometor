@@ -45,6 +45,14 @@ func (k *KeywordStream) StreamKeywordCreate(ctx context.Context, request entity.
 	switch request.Media {
 	case "twitter", "instagram", "facebook":
 		mediaValid = true
+		if request.Media == "facebook" {
+			if request.Type != "fanpage" {
+				return entity.StreamSequenceInsertable{}, &entity.ApplicationError{
+					Err:        []error{errors.New("facebook type must fanpage")},
+					HTTPStatus: http.StatusNotFound,
+				}
+			}
+		}
 		break
 	default:
 		mediaValid = false
@@ -61,6 +69,9 @@ func (k *KeywordStream) StreamKeywordCreate(ctx context.Context, request entity.
 	if request.Type == "account" {
 		request.Keyword = strings.ReplaceAll(request.Keyword, "@", "")
 	} else if request.Type == "hashtag" {
+		request.Keyword = strings.ReplaceAll(request.Keyword, "#", "")
+	} else if request.Type == "fanpage" {
+		request.Keyword = strings.ReplaceAll(request.Keyword, "@", "")
 		request.Keyword = strings.ReplaceAll(request.Keyword, "#", "")
 	}
 

@@ -13,7 +13,8 @@ type FindObjectS3Job struct{}
 
 func (f *FindObjectS3Job) PerformCollection(ctx context.Context, userProvider provider.StreamSequence, s3Provider provider.S3Management) *entity.ApplicationError {
 	var keyword string
-	if collections, err := userProvider.FindAllUser(ctx); err != nil {
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "twitter"); err != nil {
 		return err
 	} else {
 		for _, data := range collections {
@@ -25,23 +26,46 @@ func (f *FindObjectS3Job) PerformCollection(ctx context.Context, userProvider pr
 			}
 
 			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, keyword, data.Media)
-			if data.Media == "twitter" {
-				_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
-				if err != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("cannot download twitter object s3")},
-					}
+			_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download twitter object s3")},
 				}
-			} else if data.Media == "instagram" {
-				_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
-				if err != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("cannot download instagram object s3")},
-					}
-				}
+			}
+		}
+	}
 
-			} else {
-				fmt.Println("facebook Data: ", data)
+	if collections, err := userProvider.FindAllUserMedia(ctx, "facebook"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, data.Keyword, data.Media)
+			_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download facebook object s3")},
+				}
+			}
+		}
+	}
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "instagram"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			switch data.Type {
+			case "account":
+				keyword = strings.ReplaceAll(data.Keyword, "@", "")
+			case "hashtag":
+				keyword = strings.ReplaceAll(data.Keyword, "#", "")
+			}
+
+			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, keyword, data.Media)
+			_, err := s3Provider.DownloadObject(fmt.Sprintf("temp/%s", formatName))
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download twitter object s3")},
+				}
 			}
 		}
 	}
@@ -51,7 +75,8 @@ func (f *FindObjectS3Job) PerformCollection(ctx context.Context, userProvider pr
 
 func (f *FindObjectS3Job) PerformCollectionUpdate(ctx context.Context, userProvider provider.StreamSequence, s3Provider provider.S3Management) *entity.ApplicationError {
 	var keyword string
-	if collections, err := userProvider.FindAllUser(ctx); err != nil {
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "twitter"); err != nil {
 		return err
 	} else {
 		for _, data := range collections {
@@ -63,23 +88,46 @@ func (f *FindObjectS3Job) PerformCollectionUpdate(ctx context.Context, userProvi
 			}
 
 			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, keyword, data.Media)
-			if data.Media == "twitter" {
-				_, err := s3Provider.DownloadObjectUpdate(fmt.Sprintf("temp/%s", formatName), formatName)
-				if err != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("cannot download twitter object s3")},
-					}
+			_, err := s3Provider.DownloadObjectUpdate(fmt.Sprintf("temp/%s", formatName), formatName)
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download twitter object s3")},
 				}
-			} else if data.Media == "instagram" {
-				_, err := s3Provider.DownloadObjectUpdate(fmt.Sprintf("temp/%s", formatName), formatName)
-				if err != nil {
-					return &entity.ApplicationError{
-						Err: []error{errors.New("cannot download instagram object s3")},
-					}
-				}
+			}
+		}
+	}
 
-			} else {
-				fmt.Println("facebook Data: ", data)
+	if collections, err := userProvider.FindAllUserMedia(ctx, "facebook"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, data.Keyword, data.Media)
+			_, err := s3Provider.DownloadObjectUpdate(fmt.Sprintf("temp/%s", formatName), formatName)
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download facebook object s3")},
+				}
+			}
+		}
+	}
+
+	if collections, err := userProvider.FindAllUserMedia(ctx, "instagram"); err != nil {
+		return err
+	} else {
+		for _, data := range collections {
+			switch data.Type {
+			case "account":
+				keyword = strings.ReplaceAll(data.Keyword, "@", "")
+			case "hashtag":
+				keyword = strings.ReplaceAll(data.Keyword, "#", "")
+			}
+
+			formatName := fmt.Sprintf("%s-%s-%s.json", data.Type, keyword, data.Media)
+			_, err := s3Provider.DownloadObjectUpdate(fmt.Sprintf("temp/%s", formatName), formatName)
+			if err != nil {
+				return &entity.ApplicationError{
+					Err: []error{errors.New("cannot download twitter object s3")},
+				}
 			}
 		}
 	}
