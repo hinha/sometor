@@ -13,6 +13,7 @@ from celery.app.log import TaskFormatter
 from tweet_api.api import TweetSearch
 from orakarik.scrape.tweet_scrape import SnTweetScrape
 from orakarik.scrape.ig_scrape import SnInstagramScraper
+from orakarik.scrape.fanpage import Scraper as FpScraper
 # from . import summary
 import orakarik.scrape.base as Base
 from summary import Summary
@@ -191,6 +192,42 @@ def instagram_scrape_v1(dataSequence):
     dataTList.sort(key=lambda k: k['timestamp'], reverse=True)
     return {"results": ig_data, "last_update": lsUpdate}
 
+
+@app.task
+def facebook_scraper_v1(dataSequence):
+    task_request = {}
+    if isinstance(dataSequence, list):
+        if len(dataSequence) > 0 and len(dataSequence) == 1:
+            task_request = dataSequence[0]
+        else:
+            task_request = dataSequence
+    else:
+        raise Exception("length of dataSequence")
+
+    since = datetime.now() - timedelta(days=30)
+    until = datetime.now()
+
+    scrape = FpScraper()
+    try:
+        fb_data = scrape.get_fpage_post(task_request["keyword"],
+                                        since=since.strftime('%Y-%m-%d'),
+                                        until=until.strftime('%Y-%m-%d'), numpages=60, is_url=True)
+    except Exception as e:
+        print(e)
+        return {"errors": str(e)}
+
+    dataTList = []
+    for tw in fb_data:
+        nextTime = datetime.now() - datetime.fromtimestamp(tw['timestamp'])
+        tw["str_updated_date"] = timeago.format(nextTime, datetime.now())
+        dataTList.append(tw)
+
+    dataTList.sort(key=lambda k: k['timestamp'], reverse=True)
+    lsUpdate = ""
+    if len(dataTList) > 0:
+        lsUpdate = dataTList[0]["created_at"]
+
+    return {"results": dataTList, "last_update": lsUpdate}
 
 @app.task
 def add_reflect(a, b):
