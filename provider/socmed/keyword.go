@@ -108,6 +108,11 @@ func (k *KeywordStream) StreamKeywordUpdateDataInstagram(ctx context.Context, me
 	return streamInstagram.Perform(ctx, media, ID, Keyword, k.providerKeyword)
 }
 
+func (k *KeywordStream) StreamKeywordShowDataFacebook(ctx context.Context, media, ID, keyword string) (entity.FacebookResult, *entity.ApplicationError) {
+	streamFacebook := usecase.ShowStreamFacebook{}
+	return streamFacebook.Perform(ctx, media, ID, keyword, k.providerKeyword)
+}
+
 func (k *KeywordStream) TwitterOauthToken(ctx context.Context, request entity.OUserTwitter) (entity.OUserTwitterInfo, *entity.ApplicationError) {
 	oauth := usecase.ProviderOauthTwitter{}
 	return oauth.Perform(ctx, request, k.providerKeyword)

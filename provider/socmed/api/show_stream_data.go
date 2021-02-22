@@ -90,6 +90,26 @@ func (s *ShowStreamData) Handle(context provider.APIContext) {
 			"data": data,
 		})
 		return
+	case "facebook":
+		data, errProvider := s.streamProvider.StreamKeywordShowDataFacebook(context.Request().Context(), mediaType, userID, userKeyword)
+		if errProvider != nil {
+			if errProvider.HTTPStatus == http.StatusOK {
+				_ = context.JSON(http.StatusOK, map[string]interface{}{
+					"data": data,
+				})
+				return
+			}
+			_ = context.JSON(errProvider.HTTPStatus, map[string]interface{}{
+				"errors":  errProvider.ErrorString(),
+				"message": errProvider.Error(),
+			})
+			return
+		}
+
+		_ = context.JSON(http.StatusOK, map[string]interface{}{
+			"data": data,
+		})
+		return
 	default:
 		_ = context.JSON(http.StatusNotFound, map[string]interface{}{
 			"errors":  []string{fmt.Sprintf("no media found %s", context.Param("media"))},

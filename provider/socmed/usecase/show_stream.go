@@ -55,3 +55,26 @@ func (s *ShowStreamInstagram) Perform(ctx context.Context, media, userId, userKe
 
 	return data, nil
 }
+
+type ShowStreamFacebook struct{}
+
+func (s *ShowStreamFacebook) Perform(ctx context.Context, media, userId, userKeyword string, provider provider.StreamKeyword) (entity.FacebookResult, *entity.ApplicationError) {
+	_, errProvider := provider.FindByKeywordStreamWithAccount(ctx, userKeyword, media, "fanpage", userId)
+	if errProvider != nil {
+		return entity.FacebookResult{}, errProvider
+	}
+
+	formatFile := fmt.Sprintf("temp/fanpage-%s-%s.json", userKeyword, media)
+	p, err := ioutil.ReadFile(formatFile)
+	if err != nil {
+		return entity.FacebookResult{}, &entity.ApplicationError{
+			Err:        []error{err},
+			HTTPStatus: http.StatusOK,
+		}
+	}
+
+	var data entity.FacebookResult
+	json.Unmarshal(p, &data)
+
+	return data, nil
+}
