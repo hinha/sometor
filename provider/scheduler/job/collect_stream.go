@@ -20,10 +20,10 @@ func (s *SequenceAccount) JobName() string {
 }
 
 func (s *SequenceAccount) JobTime() string {
-	return "0 */10 * * * *" // Scraping Local
+	return "0 */20 * * * *" // Scraping Local
 }
 
-func (s *SequenceAccount) JobMiddleware(job *work.Job, next work.NextMiddlewareFunc) error {
+func (s *SequenceAccount) JobMiddleware(_ *work.Job, next work.NextMiddlewareFunc) error {
 	return next()
 }
 
@@ -32,7 +32,7 @@ func (s *SequenceAccount) Retry() uint {
 }
 
 // handle scraping to upload object
-func (s *SequenceAccount) JobFunc(w *work.Job) error {
+func (s *SequenceAccount) JobFunc(_ *work.Job) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(2)*time.Minute)
 	defer cancel()
 
